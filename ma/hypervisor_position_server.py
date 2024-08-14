@@ -3,7 +3,7 @@ import threading
 import uvicorn
 from fastapi import FastAPI, Request
 
-from ma import world_positions
+from ma import schoenhagen_positions
 
 app = FastAPI()
 
@@ -16,11 +16,11 @@ def read_root():
 @app.get("/position")
 def get_position(request: Request):
     print(f"hmmm ip {request.client.host}")
-    uas_id = world_positions.ip_uas_map[request.client.host]
+    uas_id = schoenhagen_positions.ip_uas_map[request.client.host]
 
-    print(f"{request.client.host}: {uas_id}: {world_positions[uas_id]}")
+    print(f"{request.client.host}: {uas_id}: {schoenhagen_positions[uas_id]}")
 
-    return {"position": world_positions[uas_id]}
+    return {"position": schoenhagen_positions[uas_id]}
 
 
 def run_position_server_async():

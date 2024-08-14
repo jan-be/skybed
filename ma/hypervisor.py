@@ -1,6 +1,6 @@
 import docker
 
-from ma import map_visualizer, world_positions, hypervisor_position_server
+from ma import map_visualizer, schoenhagen_positions, hypervisor_position_server
 
 if __name__ == '__main__':
     client = docker.from_env()
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     containers_gnb = []
     containers_uas = []
 
-    for i in range(len(world_positions.gnb_positions[:, 0])):
+    for i in range(len(schoenhagen_positions.schoenhagen_gnb_positions[:, 0])):
         containers_gnb.append(client.containers.run(image="guide", name=f"guide_{i}", detach=True, remove=True))
 
     ipam_pool = docker.types.IPAMPool(
@@ -26,10 +26,10 @@ if __name__ == '__main__':
         driver="bridge",
         ipam=ipam_config)
 
-    for i in range(len(world_positions.uas_positions[:, 0])):
+    for i in range(len(schoenhagen_positions.schoenhagen_uas_positions[:, 0])):
         containers_uas.append(client.containers.run(image="pilot", name=f"pilot_{i}", detach=True, remove=True))
         network.connect(f"pilot_{i}", ipv4_address=f"192.168.51.{i+1}")
-        world_positions.ip_uas_map[f"192.168.51.{i+1}"] = i
+        schoenhagen_positions.ip_uas_map[f"192.168.51.{i+1}"] = i
 
     map_visualizer.run_map_server_async()
     hypervisor_position_server.run_position_server_async()

@@ -1,8 +1,13 @@
-from confluent_kafka import Consumer, KafkaException
-from confluent_kafka.admin import AdminClient, NewTopic
+# code adapted from ChaosRez/6gn-functions/kafka/subscriber.py
+
 from datetime import datetime
 
-from ma.message_types import UAVResponseModel
+from confluent_kafka import Consumer, KafkaException
+from confluent_kafka.admin import AdminClient, NewTopic
+from pydantic import RootModel
+
+from ma.message_types import UAVData
+from ma.uas_position_updater import update_trajectory
 
 
 def create_topic(topic_name):
@@ -30,7 +35,10 @@ def listen_for_messages(consumer):
                 timestamp = datetime.now().strftime('%H:%M:%S.%f')[:-3]
                 msg_str = msg.value().decode('utf-8')
                 print(f'[{timestamp}] '+'Received message: {}'.format(msg_str))
-                UAVResponseModel.model_validate_json(msg_str)
+                uavs_data = RootModel[list[UAVData]].model_validate_json(msg_str).root
+
+                for uav_data in uavs_data:
+                    update_trajectory(uav_data)
 
 
 
@@ -40,7 +48,7 @@ def listen_for_messages(consumer):
     finally:
         consumer.close()
 
-if __name__ == "__main__":
+def subscribe():
     create_topic('releases')
     consumer = create_consumer()
     listen_for_messages(consumer)

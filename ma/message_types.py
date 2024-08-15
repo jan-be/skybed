@@ -27,6 +27,15 @@ class UAVData(BaseModel):
     def altitude(self) -> float:
         return self.position.altitude
 
+    def __init__(self, **data):
+        latitude = data.pop('latitude')
+        longitude = data.pop('longitude')
+        altitude = data.pop('altitude')
+
+        data['position'] = Point(latitude, longitude, altitude)
+
+        super().__init__(**data)
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 

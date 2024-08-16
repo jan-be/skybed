@@ -1,18 +1,19 @@
+import logging
 import threading
 
-import numpy as np
 import plotly.graph_objects as go
-from dash import Dash, html, dcc, callback, Output, Input
+from dash import Dash, dcc, callback, Output, Input
 
-from ma import schoenhagen_positions
+from ma.uas_position_updater import uavs_data, gnb_positions
+
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 mapbox_access_token = open(".mapbox_token").read()
 
 app = Dash()
 
 app.layout = [
-    html.H1(children='Drooooones', style={'textAlign': 'center'}),
-    dcc.Graph(id='graph-content'),
+    dcc.Graph(id='graph-content', style={'height': '100vh'}),
     dcc.Interval(id='interval', interval=1000, n_intervals=0)
 ]
 
@@ -23,10 +24,10 @@ app.layout = [
 )
 def update_graph(value):
     fig = go.Figure(go.Scattermapbox(
-        lat=np.concat((schoenhagen_positions.schoenhagen_gnb_positions[:, 0], schoenhagen_positions.schoenhagen_uas_positions[:, 0])),
-        lon=np.concat((schoenhagen_positions.schoenhagen_gnb_positions[:, 1], schoenhagen_positions.schoenhagen_uas_positions[:, 1])),
+        lat=[gnb_position.latitude for gnb_position in gnb_positions]+[uav.position.latitude for uav in uavs_data],
+        lon=[gnb_position.longitude for gnb_position in gnb_positions]+[uav.position.longitude for uav in uavs_data],
         mode='markers',
-        marker={"size": [9] * len(schoenhagen_positions.schoenhagen_gnb_positions[:, 0]) + [14] * len(schoenhagen_positions.schoenhagen_uas_positions[:, 0])},
+        marker={"size": [8] * len(gnb_positions) + [14] * len(uavs_data)},
         text=["Tower 1", "Tower 2", "Tower 3"],
     ))
 

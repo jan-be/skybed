@@ -9,16 +9,14 @@ from ma.message_types import UAVData, UAVResponseModel, MetaData
 from ma.ns3_interface import Ns3PerformanceParameters, get_ns3_sim_result
 
 uavs_data = [
-    UAVData(uav_id="001", uav_type="1",
-            latitude=52.20237543416176, longitude=13.150412924715013, altitude=10000, speed=50, direction=90,
-            vertical_speed=0),
-    UAVData(uav_id="002", uav_type="1",
-            latitude=52.20319075876912, longitude=13.155755910701549, altitude=10000, speed=50, direction=270,
-            vertical_speed=0),
-    # UAVData(uav_id="003", uav_type="1",
-    #         latitude=52.204492415697864, longitude=13.159446838052352, altitude=10000, speed=50, direction=90, vertical_speed=0),
-    # UAVData(uav_id="004", uav_type="1",
-    #         latitude=52.204492415697864, longitude=13.164274813461564, altitude=10000, speed=50, direction=270, vertical_speed=0)
+    UAVData(uav_id="001", uav_type="1", latitude=52.20237543416176, longitude=13.150412924715013, altitude=10000,
+            speed=50, direction=70, vertical_speed=0),
+    UAVData(uav_id="002", uav_type="1", latitude=52.20319075876912, longitude=13.155755910701549, altitude=10000,
+            speed=50, direction=250, vertical_speed=0),
+    UAVData(uav_id="003", uav_type="1", latitude=52.20390073751389, longitude=13.159446838052352, altitude=10000,
+            speed=50, direction=250, vertical_speed=0),
+    UAVData(uav_id="004", uav_type="1", latitude=52.204492415697864, longitude=13.164274813461564, altitude=10000,
+            speed=50, direction=70, vertical_speed=0)
 ]
 # uavs_data = [
 #     UAVData(uav_id="001", uav_type="1",
@@ -89,5 +87,5 @@ def update_trajectory(new_uav_data: UAVData):
 def loop_update_post_position():
     while True:
         post_new_position()
-        time.sleep(5)
+        time.sleep(1)
         update_position(1)

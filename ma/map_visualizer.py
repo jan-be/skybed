@@ -24,11 +24,11 @@ app.layout = [
 )
 def update_graph(value):
     fig = go.Figure(go.Scattermapbox(
-        lat=[gnb_position.latitude for gnb_position in gnb_positions]+[uav.position.latitude for uav in uavs_data],
-        lon=[gnb_position.longitude for gnb_position in gnb_positions]+[uav.position.longitude for uav in uavs_data],
+        lat=[gnb_position.latitude for gnb_position in gnb_positions] + [uav.position.latitude for uav in uavs_data],
+        lon=[gnb_position.longitude for gnb_position in gnb_positions] + [uav.position.longitude for uav in uavs_data],
         mode='markers',
         marker={"size": [8] * len(gnb_positions) + [14] * len(uavs_data)},
-        text=["Tower 1", "Tower 2", "Tower 3"],
+        text=["Tower 1", "Tower 2", "Tower 3"] + [f"UAV ID: {uav.uav_id}" for uav in uavs_data],
     ))
 
     fig.update_layout(

@@ -18,7 +18,7 @@ def get_ns3_sim_result(distance: float) -> Ns3PerformanceParameters:
     # 49 dbm from https://www.techplayon.com/5g-nr-total-transmit-power-maximum-cell-transmit-power-reference-signal-power/
 
     process = sp.Popen(
-        shlex.split(f'docker run --rm carnegie ./ns3 run "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
+        shlex.split(f'docker run --rm carnegie ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
         stdout=sp.PIPE,
         stderr=sp.PIPE, shell=False)
 

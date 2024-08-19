@@ -22,7 +22,7 @@ def create_consumer(ip: str):
     return consumer
 
 
-def listen_for_messages(consumer, ip: str):
+def listen_for_messages(consumer, ip: str, uav_id: str):
     consumer.subscribe(['releases'])
 
     try:
@@ -37,11 +37,13 @@ def listen_for_messages(consumer, ip: str):
             else:
                 timestamp = datetime.now().strftime('%H:%M:%S.%f')[:-3]
                 msg_str = msg.value().decode('utf-8')
-                print(f'[{timestamp}, {ip}] ' + 'Received message: {}'.format(msg_str))
                 uavs_data = RootModel[list[UAVData]].model_validate_json(msg_str).root
 
+                # ignore all parts of messages that are not related to the UAV associated with this thread
                 for uav_data in uavs_data:
-                    update_trajectory(uav_data)
+                    if uav_data.uav_id == uav_id:
+                        print(f'[{timestamp}, {ip}] ' + 'Received message: {}'.format(msg_str))
+                        update_trajectory(uav_data)
 
 
 
@@ -52,10 +54,10 @@ def listen_for_messages(consumer, ip: str):
         consumer.close()
 
 
-def subscribe(ip: str):
+def subscribe(ip: str, uav_id: str):
     create_topic('releases', ip)
     consumer = create_consumer(ip)
-    listen_for_messages(consumer, ip)
+    listen_for_messages(consumer, ip, uav_id)
 
 
 if __name__ == '__main__':

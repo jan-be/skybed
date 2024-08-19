@@ -54,6 +54,17 @@ files = [
 ]
 
 [[package]]
+name = "chardet"
+version = "5.2.0"
+description = "Universal encoding detector for Python 3"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970"},
+    {file = "chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7"},
+]
+
+[[package]]
 name = "charset-normalizer"
 version = "3.3.2"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
@@ -293,6 +304,25 @@ files = [
     {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},
     {file = "dash_table-5.0.0.tar.gz", hash = "sha256:18624d693d4c8ef2ddec99a6f167593437a7ea0bf153aa20f318c170c5bc7308"},
 ]
+
+[[package]]
+name = "dataproperty"
+version = "1.0.1"
+description = "Python library for extract property from data."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "DataProperty-1.0.1-py3-none-any.whl", hash = "sha256:0b8b07d4fb6453fcf975b53d35dea41f3cfd69c9d79b5010c3cf224ff0407a7a"},
+    {file = "DataProperty-1.0.1.tar.gz", hash = "sha256:723e5729fa6e885e127a771a983ee1e0e34bb141aca4ffe1f0bfa7cde34650a4"},
+]
+
+[package.dependencies]
+mbstrdecoder = ">=1.0.0,<2"
+typepy = {version = ">=1.2.0,<2", extras = ["datetime"]}
+
+[package.extras]
+logging = ["loguru (>=0.4.1,<1)"]
+test = ["pytest (>=6.0.1)", "pytest-md-report (>=0.3)", "tcolorpy (>=0.1.2)"]
 
 [[package]]
 name = "dnspython"
@@ -554,6 +584,23 @@ http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
 
 [[package]]
+name = "humanreadable"
+version = "0.4.0"
+description = "humanreadable is a Python library to convert human-readable values to other units."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "humanreadable-0.4.0-py3-none-any.whl", hash = "sha256:5b70257a8e88856f9b64a1f0a6fb7535c9002818465e298ca27d745b25e5675d"},
+    {file = "humanreadable-0.4.0.tar.gz", hash = "sha256:2879a146f0602512addfcfba227956a3f1d23b99e9f938ff91b2085a170519ba"},
+]
+
+[package.dependencies]
+typepy = ">=1.2.0,<2"
+
+[package.extras]
+test = ["pytest", "pytest-md-report (>=0.3)"]
+
+[[package]]
 name = "idna"
 version = "3.7"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -610,6 +657,24 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
+
+[[package]]
+name = "loguru"
+version = "0.7.2"
+description = "Python logging made (stupidly) simple"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "loguru-0.7.2-py3-none-any.whl", hash = "sha256:003d71e3d3ed35f0f8984898359d65b79e5b21943f78af86aa5491210429b8eb"},
+    {file = "loguru-0.7.2.tar.gz", hash = "sha256:e671a53522515f34fd406340ee968cb9ecafbc4b36c679da03c18fd8d0bd51ac"},
+]
+
+[package.dependencies]
+colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
+win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+dev = ["Sphinx (==7.2.5)", "colorama (==0.4.5)", "colorama (==0.4.6)", "exceptiongroup (==1.1.3)", "freezegun (==1.1.0)", "freezegun (==1.2.2)", "mypy (==v0.910)", "mypy (==v0.971)", "mypy (==v1.4.1)", "mypy (==v1.5.1)", "pre-commit (==3.4.0)", "pytest (==6.1.2)", "pytest (==7.4.0)", "pytest-cov (==2.12.1)", "pytest-cov (==4.1.0)", "pytest-mypy-plugins (==1.9.3)", "pytest-mypy-plugins (==3.0.0)", "sphinx-autobuild (==2021.3.14)", "sphinx-rtd-theme (==1.3.0)", "tox (==3.27.1)", "tox (==4.11.0)"]
 
 [[package]]
 name = "markdown-it-py"
@@ -705,6 +770,23 @@ files = [
 ]
 
 [[package]]
+name = "mbstrdecoder"
+version = "1.1.3"
+description = "mbstrdecoder is a Python library for multi-byte character string decoder"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mbstrdecoder-1.1.3-py3-none-any.whl", hash = "sha256:d66c1ed3f2dc4e7c5d87cd44a75be10bc5af4250f95b38bbaedd7851308ce938"},
+    {file = "mbstrdecoder-1.1.3.tar.gz", hash = "sha256:dcfd2c759322eb44fe193a9e0b1b86c5b87f3ec5ea8e1bb43b3e9ae423f1e8fe"},
+]
+
+[package.dependencies]
+chardet = ">=3.0.4,<6"
+
+[package.extras]
+test = ["Faker (>=1.0.2)", "pytest (>=6.0.1)", "pytest-md-report (>=0.1)"]
+
+[[package]]
 name = "mdurl"
 version = "0.1.2"
 description = "Markdown URL utilities"
@@ -714,6 +796,20 @@ files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
 ]
+
+[[package]]
+name = "msgfy"
+version = "0.2.1"
+description = "msgfy is a Python library for convert Exception instance to a human-readable error message."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "msgfy-0.2.1-py3-none-any.whl", hash = "sha256:c6d12d963c3cec96359884fc598ae7f84f528de830bf55c9ccf3099a482ac63c"},
+    {file = "msgfy-0.2.1.tar.gz", hash = "sha256:161024732591444cc05ca3982a010005932005ec861467dead49349447a91671"},
+]
+
+[package.extras]
+test = ["pytest (>=6.0.1)", "pytest-md-report (>=0.4.1)"]
 
 [[package]]
 name = "nest-asyncio"
@@ -859,6 +955,36 @@ spss = ["pyreadstat (>=1.2.0)"]
 sql-other = ["SQLAlchemy (>=2.0.0)", "adbc-driver-postgresql (>=0.8.0)", "adbc-driver-sqlite (>=0.8.0)"]
 test = ["hypothesis (>=6.46.1)", "pytest (>=7.3.2)", "pytest-xdist (>=2.2.0)"]
 xml = ["lxml (>=4.9.2)"]
+
+[[package]]
+name = "path"
+version = "16.16.0"
+description = "A module wrapper for os.path"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "path-16.16.0-py3-none-any.whl", hash = "sha256:d981989cf87598adc9f5b71ec5192d314a384836e81b4b1f34197138dc4ae659"},
+    {file = "path-16.16.0.tar.gz", hash = "sha256:a6a6d916c910dc17e0ddc883358756c5a33d1b6dbdf5d6de86554f399053af58"},
+]
+
+[package.extras]
+doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+test = ["appdirs", "more-itertools", "packaging", "pygments", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)", "pywin32"]
+
+[[package]]
+name = "pathvalidate"
+version = "3.2.0"
+description = "pathvalidate is a Python library to sanitize/validate a string such as filenames/file-paths/etc."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pathvalidate-3.2.0-py3-none-any.whl", hash = "sha256:cc593caa6299b22b37f228148257997e2fa850eea2daf7e4cc9205cef6908dee"},
+    {file = "pathvalidate-3.2.0.tar.gz", hash = "sha256:5e8378cf6712bff67fbe7a8307d99fa8c1a0cb28aa477056f8fc374f0dff24ad"},
+]
+
+[package.extras]
+docs = ["Sphinx (>=2.4)", "sphinx-rtd-theme (>=1.2.2)", "urllib3 (<2)"]
+test = ["Faker (>=1.0.8)", "allpairspy (>=2)", "click (>=6.2)", "pytest (>=6.0.1)", "pytest-discord (>=0.1.4)", "pytest-md-report (>=0.4.1)"]
 
 [[package]]
 name = "plotly"
@@ -1011,6 +1137,34 @@ files = [
 
 [package.extras]
 windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
+name = "pyparsing"
+version = "3.1.2"
+description = "pyparsing module - Classes and methods to define and execute parsing grammars"
+optional = false
+python-versions = ">=3.6.8"
+files = [
+    {file = "pyparsing-3.1.2-py3-none-any.whl", hash = "sha256:f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742"},
+    {file = "pyparsing-3.1.2.tar.gz", hash = "sha256:a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad"},
+]
+
+[package.extras]
+diagrams = ["jinja2", "railroad-diagrams"]
+
+[[package]]
+name = "pyroute2"
+version = "0.7.12"
+description = "Python Netlink library"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyroute2-0.7.12-py3-none-any.whl", hash = "sha256:9df8d0fcb5fb0a724603bcfdef76ffbd287f00f69e9fb660c20a06962b24691a"},
+    {file = "pyroute2-0.7.12.tar.gz", hash = "sha256:54d226fc3ff2732f49bac9b26853c50c9d05be05a4d9daf09c7cf6d77301eff3"},
+]
+
+[package.dependencies]
+win-inet-pton = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "python-dateutil"
@@ -1228,6 +1382,30 @@ files = [
 ]
 
 [[package]]
+name = "simplesqlite"
+version = "1.5.2"
+description = "SimpleSQLite is a Python library to simplify SQLite database operations: table creation, data insertion and get data as other data formats. Simple ORM functionality for SQLite."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "SimpleSQLite-1.5.2-py3-none-any.whl", hash = "sha256:f62300ce1e367fd5234a959fa3a32d7c81bdf719204ebc1e70c4f3cd91672dc6"},
+    {file = "SimpleSQLite-1.5.2.tar.gz", hash = "sha256:f9a25b9e43d7aa28f551d170a42cfae10139c5c81a1bcb8776f857816ef5ae0f"},
+]
+
+[package.dependencies]
+DataProperty = ">=1.0.1,<2"
+mbstrdecoder = ">=1.0.0,<2"
+pathvalidate = ">=2.5.2,<4"
+sqliteschema = ">=1.4.0,<3"
+tabledata = ">=1.1.3,<2"
+typepy = ">=1.2.0,<2"
+
+[package.extras]
+docs = ["Sphinx (>=2.4)", "sphinx-rtd-theme (>=1.2.2)"]
+logging = ["loguru (>=0.4.1,<1)"]
+test = ["beautifulsoup4 (>=4.10)", "pytablereader (>=0.31.3)", "pytablewriter (>=0.50)", "pytest (>=6.0.1)", "pytest-discord (>=0.1.6)", "pytest-md-report (>=0.5)"]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1250,6 +1428,28 @@ files = [
 ]
 
 [[package]]
+name = "sqliteschema"
+version = "2.0.0"
+description = "A Python library to dump table schema of a SQLite database file."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "sqliteschema-2.0.0-py3-none-any.whl", hash = "sha256:29e0a3e0d5dd8f21e06816850e5d171bfa61155ddabfb2e7422b73215b033714"},
+    {file = "sqliteschema-2.0.0.tar.gz", hash = "sha256:fe6cedddf10de8934ec1ace8319340a2256667e4a1a36f3da4fd1c0956124dc8"},
+]
+
+[package.dependencies]
+mbstrdecoder = ">=0.8.3,<2"
+tabledata = ">=1.3.1,<2"
+typepy = ">=1.1.4,<2"
+
+[package.extras]
+cli = ["loguru (>=0.4.1,<1)", "pytablewriter (>=0.64.0,<2)"]
+dumps = ["pytablewriter (>=0.64.0,<2)"]
+logging = ["loguru (>=0.4.1,<1)"]
+test = ["SimpleSQLite (>=1.3.2)", "pytablewriter (>=0.64.0,<2)", "pytest (>=6.0.1)", "pytest-discord (>=0.1.6)", "pytest-md-report (>=0.5.0)"]
+
+[[package]]
 name = "starlette"
 version = "0.37.2"
 description = "The little ASGI library that shines."
@@ -1267,6 +1467,75 @@ anyio = ">=3.4.0,<5"
 full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.7)", "pyyaml"]
 
 [[package]]
+name = "subprocrunner"
+version = "2.0.1"
+description = "A Python wrapper library for subprocess module."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "subprocrunner-2.0.1-py3-none-any.whl", hash = "sha256:778e1bcec011b3214d247bf65c42b26f3d3f0a25d12188def6b9574c6671e166"},
+    {file = "subprocrunner-2.0.1.tar.gz", hash = "sha256:3723226a1bf6b51569fd8f82aa4f0588eef7adf129d16aac8b317555624e8f69"},
+]
+
+[package.dependencies]
+mbstrdecoder = ">=1.0.0,<2"
+
+[package.extras]
+logging = ["loguru (>=0.4.1,<1)"]
+test = ["loguru (>=0.4.1,<1)", "pytest", "pytest-mock", "typepy"]
+
+[[package]]
+name = "tabledata"
+version = "1.3.3"
+description = "tabledata is a Python library to represent tabular data. Used for pytablewriter/pytablereader/SimpleSQLite/etc."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tabledata-1.3.3-py3-none-any.whl", hash = "sha256:4abad1c996d8607e23b045b44dc0c5f061668f3c37585302c5f6c84c93a89962"},
+    {file = "tabledata-1.3.3.tar.gz", hash = "sha256:c90daaba9a408e4397934b3ff2f6c06797d5289676420bf520c741ad43e6ff91"},
+]
+
+[package.dependencies]
+DataProperty = ">=1.0.1,<2"
+typepy = ">=1.2.0,<2"
+
+[package.extras]
+logging = ["loguru (>=0.4.1,<1)"]
+test = ["pytablewriter (>=0.46)", "pytest"]
+
+[[package]]
+name = "tcconfig"
+version = "0.29.1"
+description = "tcconfig is a tc command wrapper. Make it easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth)."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tcconfig-0.29.1-py3-none-any.whl", hash = "sha256:d6dd2dd15d37f8f57793d7835a6a0b4106d8b2c2841efffea2a3c90b5e70c2bb"},
+    {file = "tcconfig-0.29.1.tar.gz", hash = "sha256:3221eceee5ce2cbfbb2e29ed26b4111ec6af25866d78b3750c72b54313ec609b"},
+]
+
+[package.dependencies]
+DataProperty = ">=1.0.1,<2"
+docker = ">=1.9.0,<8"
+humanreadable = ">=0.3,<1"
+loguru = ">=0.4.1,<1"
+msgfy = ">=0.1.0,<1"
+path = ">=13,<17"
+pyparsing = ">=2.0.3,<4"
+pyroute2 = ">=0.6.1,<1"
+SimpleSQLite = ">=1.3.2,<1.5.0 || >1.5.0,<1.5.1 || >1.5.1,<2"
+subprocrunner = ">=1.2.1,<3"
+typepy = ">=1.1.1,<2"
+voluptuous = "<1"
+
+[package.extras]
+all = ["Pygments (>=2.2.0,<3)"]
+buildexe = ["pyinstaller (>=4.7,<7)"]
+color = ["Pygments (>=2.2.0,<3)"]
+docs = ["Sphinx (>=2.4)", "sphinx-rtd-theme (>=1.2.2)"]
+test = ["allpairspy (>=2.5)", "pingparsing (>=1)", "pytest (>=6.0.1)", "pytest-discord (>=0.1.6)", "pytest-md-report (>=0.6.2)"]
+
+[[package]]
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
@@ -1280,6 +1549,27 @@ files = [
 [package.extras]
 doc = ["reno", "sphinx"]
 test = ["pytest", "tornado (>=4.5)", "typeguard"]
+
+[[package]]
+name = "typepy"
+version = "1.3.2"
+description = "typepy is a Python library for variable type checker/validator/converter at a run time."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "typepy-1.3.2-py3-none-any.whl", hash = "sha256:d5d1022a424132622993800f1d2cd16cfdb691ac4e3b9c325f0fcb37799db1ae"},
+    {file = "typepy-1.3.2.tar.gz", hash = "sha256:b69fd48b9f50cdb3809906eef36b855b3134ff66c8893a4f8580abddb0b39517"},
+]
+
+[package.dependencies]
+mbstrdecoder = ">=1.0.0,<2"
+packaging = {version = "*", optional = true, markers = "extra == \"datetime\""}
+python-dateutil = {version = ">=2.8.0,<3.0.0", optional = true, markers = "extra == \"datetime\""}
+pytz = {version = ">=2018.9", optional = true, markers = "extra == \"datetime\""}
+
+[package.extras]
+datetime = ["packaging", "python-dateutil (>=2.8.0,<3.0.0)", "pytz (>=2018.9)"]
+test = ["packaging", "pytest (>=6.0.1)", "python-dateutil (>=2.8.0,<3.0.0)", "pytz (>=2018.9)", "tcolorpy"]
 
 [[package]]
 name = "typer"
@@ -1405,6 +1695,17 @@ files = [
 [package.extras]
 docs = ["Sphinx (>=4.1.2,<4.2.0)", "sphinx-rtd-theme (>=0.5.2,<0.6.0)", "sphinxcontrib-asyncio (>=0.3.0,<0.4.0)"]
 test = ["Cython (>=0.29.36,<0.30.0)", "aiohttp (==3.9.0b0)", "aiohttp (>=3.8.1)", "flake8 (>=5.0,<6.0)", "mypy (>=0.800)", "psutil", "pyOpenSSL (>=23.0.0,<23.1.0)", "pycodestyle (>=2.9.0,<2.10.0)"]
+
+[[package]]
+name = "voluptuous"
+version = "0.15.2"
+description = "Python data validation library"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "voluptuous-0.15.2-py3-none-any.whl", hash = "sha256:016348bc7788a9af9520b1764ebd4de0df41fe2138ebe9e06fa036bf86a65566"},
+    {file = "voluptuous-0.15.2.tar.gz", hash = "sha256:6ffcab32c4d3230b4d2af3a577c87e1908a714a11f6f95570456b1849b0279aa"},
+]
 
 [[package]]
 name = "watchfiles"
@@ -1592,6 +1893,31 @@ MarkupSafe = ">=2.1.1"
 watchdog = ["watchdog (>=2.3)"]
 
 [[package]]
+name = "win-inet-pton"
+version = "1.1.0"
+description = "Native inet_pton and inet_ntop implementation for Python on Windows (with ctypes)."
+optional = false
+python-versions = "*"
+files = [
+    {file = "win_inet_pton-1.1.0-py2.py3-none-any.whl", hash = "sha256:eaf0193cbe7152ac313598a0da7313fb479f769343c0c16c5308f64887dc885b"},
+    {file = "win_inet_pton-1.1.0.tar.gz", hash = "sha256:dd03d942c0d3e2b1cf8bab511844546dfa5f74cb61b241699fa379ad707dea4f"},
+]
+
+[[package]]
+name = "win32-setctime"
+version = "1.1.0"
+description = "A small Python utility to set file creation time on Windows"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
+    {file = "win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2"},
+]
+
+[package.extras]
+dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
+
+[[package]]
 name = "zipp"
 version = "3.19.2"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -1609,4 +1935,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "84d508ddafc65a3723b41a3bfc4cd6d5e736fe5683353ca81895c139a43836e3"
+content-hash = "793d5377af8219dce8cd667ed0d013e4c826f2b8de29d8608c6798ea30375fa9"

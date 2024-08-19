@@ -1,42 +1,30 @@
-import docker
+import threading
 
-from ma import map_visualizer, schoenhagen_positions, hypervisor_position_server
+from ma import map_visualizer
+from ma.docker_networks import create_and_attach_docker_network, destroy_docker_network
+from ma.subscriber import subscribe
+from ma.uas_position_updater import loop_update_post_position, uavs_data
+
+uav_net_map = {}
+
+
+def cleanup():
+    for uav_data in uavs_data:
+        destroy_docker_network(uav_net_map[uav_data.uav_id]['network_id'])
+
 
 if __name__ == '__main__':
-    client = docker.from_env()
+    try:
+        for uav_data in uavs_data:
+            network_id, ip = create_and_attach_docker_network(f"UAV_{uav_data.uav_id}")
+            uav_net_map[uav_data.uav_id] = {"network_id": network_id, "ip": ip}
+            threading.Thread(target=subscribe, args=[ip, uav_data.uav_id]).start()
 
-    # image = client.images.build(path=".", tag="hmm")
-    # print(image)
+        threading.Thread(target=loop_update_post_position, args=[uav_net_map]).start()
 
-    containers_gnb = []
-    containers_uas = []
-
-    for i in range(len(schoenhagen_positions.schoenhagen_gnb_positions[:, 0])):
-        containers_gnb.append(client.containers.run(image="guide", name=f"guide_{i}", detach=True, remove=True))
-
-    ipam_pool = docker.types.IPAMPool(
-        subnet='192.168.51.0/24',
-        gateway='192.168.51.254'
-    )
-    ipam_config = docker.types.IPAMConfig(
-        pool_configs=[ipam_pool]
-    )
-    network = client.networks.create(
-        f"network_uases_2",
-        driver="bridge",
-        ipam=ipam_config)
-
-    for i in range(len(schoenhagen_positions.schoenhagen_uas_positions[:, 0])):
-        containers_uas.append(client.containers.run(image="pilot", name=f"pilot_{i}", detach=True, remove=True))
-        network.connect(f"pilot_{i}", ipv4_address=f"192.168.51.{i+1}")
-        schoenhagen_positions.ip_uas_map[f"192.168.51.{i+1}"] = i
-
-    map_visualizer.run_map_server_async()
-    hypervisor_position_server.run_position_server_async()
-
-    print(containers_gnb + containers_uas)
-
-    network.remove()
-
-    for con in containers_gnb + containers_uas:
-        con.stop()
+        map_visualizer.run_map_server_async()
+    except KeyboardInterrupt:
+        print("\nCtrl+C detected!")
+    finally:
+        # cleanup()
+        pass

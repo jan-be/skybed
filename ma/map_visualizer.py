@@ -42,6 +42,7 @@ def update_graph(value):
                 lon=13.15873017619153
             ),
             pitch=0,
+            # zoom=5
             zoom=14
         ),
     )

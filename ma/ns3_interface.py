@@ -15,6 +15,10 @@ class Ns3PerformanceParameters(BaseModel):
 
 
 def get_ns3_sim_result(distance: float) -> Ns3PerformanceParameters:
+    # the simulation for some reason breaks if the distance is >= 2^16 meters
+    if distance >= 65536:
+        return Ns3PerformanceParameters(delay=0, jitter=0, throughput=0, packet_loss=1)
+
     # 49 dbm from https://www.techplayon.com/5g-nr-total-transmit-power-maximum-cell-transmit-power-reference-signal-power/
 
     process = sp.Popen(

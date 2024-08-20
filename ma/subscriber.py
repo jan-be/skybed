@@ -1,5 +1,5 @@
 # code adapted from ChaosRez/6gn-functions/kafka/subscriber.py
-import threading
+import traceback
 from datetime import datetime
 
 from confluent_kafka import Consumer, KafkaException
@@ -32,8 +32,7 @@ def listen_for_messages(consumer, ip: str, uav_id: str):
             if msg is None:
                 continue
             if msg.error():
-                print(ip)
-                raise KafkaException(msg.error())
+                raise KafkaException(f"{ip}: {msg.error()}")
             else:
                 timestamp = datetime.now().strftime('%H:%M:%S.%f')[:-3]
                 msg_str = msg.value().decode('utf-8')
@@ -45,12 +44,10 @@ def listen_for_messages(consumer, ip: str, uav_id: str):
                         print(f'[{timestamp}, {ip}] ' + 'Received message: {}'.format(msg_str))
                         update_trajectory(uav_data)
 
-
-
-    except KeyboardInterrupt:
-        pass
-
+    except Exception as e:
+        traceback.print_exc()
     finally:
+        print("consumer closed")
         consumer.close()
 
 
@@ -58,10 +55,3 @@ def subscribe(ip: str, uav_id: str):
     create_topic('releases', ip)
     consumer = create_consumer(ip)
     listen_for_messages(consumer, ip, uav_id)
-
-
-if __name__ == '__main__':
-    ips = [f"172.{x}.0.2" for x in range(25, 29)]
-    print(ips)
-    for ip in ips:
-        threading.Thread(target=subscribe, args=[ip]).start()

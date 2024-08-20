@@ -72,7 +72,7 @@ def post_new_position(uav_data: UAVData, ip):
     #      Maybe it can be achieved by throtting on an HTTP level
     #      Or maybe Reza will do /update using message brokering like for mutate
     r = requests.post(url=f'http://localhost:8000/update', data=dump)
-    print("hmm", r.text)
+    print("Http response:", r.text)
 
 
 def update_position(virtual_seconds_since_last_update: float):
@@ -110,7 +110,7 @@ def update_container_network(uav_data: UAVData, uav_net_map):
 def loop_update_post_position(uav_net_map):
     while True:
         post_new_positions(uav_net_map)
-        time.sleep(1)
+        time.sleep(5)
         update_position(1)
 
         for uav_data in uavs_data:

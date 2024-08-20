@@ -6,10 +6,10 @@ import requests
 from geopy import Point
 from geopy.distance import geodesic, distance
 
-from ma.helpers import geopy_3d_distance
-from ma.message_types import UAVData, UAVResponseModel, MetaData
-from ma.ns3_interface import Ns3PerformanceParameters, get_ns3_sim_result
-from ma.slow_downer import slow_down_container_network
+from skybed.helpers import geopy_3d_distance
+from skybed.message_types import UAVData, UAVResponseModel, MetaData
+from skybed.ns3_interface import Ns3PerformanceParameters, get_ns3_sim_result
+from skybed.slow_downer import slow_down_container_network
 
 uavs_data = [
     UAVData(uav_id="001", uav_type="1", latitude=52.20237543416176, longitude=13.150412924715013, altitude=300,

@@ -1,10 +1,10 @@
 import threading
 from time import sleep
 
-from ma import map_visualizer
-from ma.docker_networks import create_and_attach_docker_network, destroy_docker_network
-from ma.subscriber import subscribe
-from ma.uas_position_updater import loop_update_post_position, uavs_data
+from skybed import map_visualizer
+from skybed.docker_networks import create_and_attach_docker_network, destroy_docker_network
+from skybed.subscriber import subscribe
+from skybed.uas_position_updater import loop_update_post_position, uavs_data
 
 uav_net_map = {}
 

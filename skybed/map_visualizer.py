@@ -1,14 +1,15 @@
 import logging
+import os
 import threading
 
 import plotly.graph_objects as go
 from dash import Dash, dcc, callback, Output, Input
 
-from ma.uas_position_updater import uavs_data, gnb_positions
+from skybed.uas_position_updater import uavs_data, gnb_positions
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-mapbox_access_token = open(".mapbox_token").read()
+mapbox_access_token = open(os.path.join(os.path.dirname(__file__), ".mapbox_token")).read()
 
 app = Dash()
 

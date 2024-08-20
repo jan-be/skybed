@@ -1,7 +1,0 @@
-FROM python:3.12-alpine
-
-RUN pip install dash numpy pandas docker plotly fastapi
-
-COPY . .
-
-CMD python ma/uas_guide.py

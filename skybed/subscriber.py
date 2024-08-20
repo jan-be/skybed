@@ -6,8 +6,8 @@ from confluent_kafka import Consumer, KafkaException
 from confluent_kafka.admin import AdminClient, NewTopic
 from pydantic import RootModel
 
-from ma.message_types import UAVData
-from ma.uas_position_updater import update_trajectory
+from skybed.message_types import UAVData
+from skybed.uas_position_updater import update_trajectory
 
 
 def create_topic(topic_name, ip: str):

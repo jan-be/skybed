@@ -1,7 +1,7 @@
 import shlex
 import subprocess
 
-from ma.ns3_interface import Ns3PerformanceParameters
+from skybed.ns3_interface import Ns3PerformanceParameters
 
 
 def slow_down_container_network(network_id: str, perf_params: Ns3PerformanceParameters):

@@ -1,8 +1,9 @@
+import json
+import time
+from datetime import datetime
+
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
-from datetime import datetime
-import time
-import json
 
 
 def create_topic(topic_name):

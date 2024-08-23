@@ -1,14 +1,12 @@
 import threading
 import time
 
-import geopy
 import requests
 from geopy import Point
-from geopy.distance import geodesic, distance
 
 from skybed.helpers import geopy_3d_distance
-from skybed.message_types import UAVData, UAVResponseModel, MetaData
-from skybed.ns3_interface import Ns3PerformanceParameters, get_ns3_sim_result
+from skybed.message_types import UAVData
+from skybed.ns3_interface import NetworkParams, get_ns3_sim_result
 from skybed.slow_downer import slow_down_container_network
 
 uavs_data = [
@@ -50,51 +48,20 @@ gnb_positions = [
 currently_ns3_is_calculating_by_uav = {u.uav_id: False for u in uavs_data}
 
 
-def get_network_params_best_gnb(uav_data: UAVData) -> Ns3PerformanceParameters:
+def poll_current_uav_status(uav_data: UAVData, ip: str):
+    r = requests.get(url=f'http://{ip}:5000/uav_data')
+    new_uav_data = UAVData.model_validate_json(r.text)
+    uavs_data[uavs_data.index(uav_data)] = new_uav_data
+    print("new UAV data:", new_uav_data)
+
+
+def get_network_params_best_gnb(uav_data: UAVData) -> NetworkParams:
     closest_dist = float("inf")
     for gnb_position in gnb_positions:
         dist = geopy_3d_distance(gnb_position, uav_data.position)
         closest_dist = min(closest_dist, dist)
 
     return get_ns3_sim_result(distance=closest_dist)
-
-
-def post_new_positions(uav_net_map):
-    for uav_data in uavs_data:
-        post_new_position(uav_data, uav_net_map[uav_data.uav_id]["ip"])
-
-
-def post_new_position(uav_data: UAVData, ip):
-    dump = UAVResponseModel(data=[uav_data],
-                            meta=MetaData(origin="self_report", timestamp=time.time())).model_dump_json()
-    print("dump", dump)
-    # TODO throttling localhost is difficult.
-    #      Maybe it can be achieved by throtting on an HTTP level
-    #      Or maybe Reza will do /update using message brokering like for mutate
-    r = requests.post(url=f'http://localhost:8000/update', data=dump)
-    print("Http response:", r.text)
-
-
-def update_position(virtual_seconds_since_last_update: float):
-    for uav_data in uavs_data:
-        new_altitude = uav_data.altitude + uav_data.vertical_speed * virtual_seconds_since_last_update
-
-        distance_xy_obj = geopy.distance.geodesic(
-            kilometers=uav_data.speed / 60 / 60 * virtual_seconds_since_last_update)
-
-        # bearing is the direction in degrees
-        uav_data.position = distance_xy_obj.destination(point=uav_data.position, bearing=uav_data.direction)
-
-        # distance function erases altitude, so no +=
-        uav_data.position.altitude = new_altitude
-
-
-# we cannot trust the position data in the requests, because there might be latency
-def update_trajectory(new_uav_data: UAVData):
-    uav_data = [uav_data for uav_data in uavs_data if uav_data.uav_id == new_uav_data.uav_id][0]
-    uav_data.speed = new_uav_data.speed
-    uav_data.direction = new_uav_data.direction
-    uav_data.vertical_speed = new_uav_data.vertical_speed
 
 
 def update_container_network(uav_data: UAVData, uav_net_map):
@@ -107,12 +74,13 @@ def update_container_network(uav_data: UAVData, uav_net_map):
     currently_ns3_is_calculating_by_uav[uav_data.uav_id] = False
 
 
-def loop_update_post_position(uav_net_map):
+def loop_update_position_and_network_params(uav_net_map):
     while True:
-        post_new_positions(uav_net_map)
-        time.sleep(5)
-        update_position(1)
+        time.sleep(0.1)
+
+        print(uav_net_map)
 
         for uav_data in uavs_data:
+            poll_current_uav_status(uav_data, uav_net_map[uav_data.uav_id]["ip"])
             if not currently_ns3_is_calculating_by_uav[uav_data.uav_id]:
                 threading.Thread(target=update_container_network, args=(uav_data, uav_net_map)).start()

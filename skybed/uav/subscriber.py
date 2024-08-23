@@ -7,7 +7,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from pydantic import RootModel
 
 from skybed.message_types import UAVData
-from skybed.uas_position_updater import update_trajectory
+from skybed.uav.position import update_trajectory_from_collision_avoidance_msg
 
 
 def create_topic(topic_name, ip: str):
@@ -42,9 +42,9 @@ def listen_for_messages(consumer, ip: str, uav_id: str):
                 for uav_data in uavs_data:
                     if uav_data.uav_id == uav_id:
                         print(f'[{timestamp}, {ip}] ' + 'Received message: {}'.format(msg_str))
-                        update_trajectory(uav_data)
+                        update_trajectory_from_collision_avoidance_msg(uav_data)
 
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
     finally:
         print("consumer closed")

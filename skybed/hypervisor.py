@@ -1,28 +1,26 @@
 import threading
 from time import sleep
 
+import typer
+
 from skybed import map_visualizer
-from skybed.docker_networks import create_and_attach_docker_network, destroy_docker_network
-from skybed.subscriber import subscribe
-from skybed.uas_position_updater import loop_update_post_position, uavs_data
+from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container
+from skybed.uas_position_updater import loop_update_position_and_network_params, uavs_data
 
 uav_net_map = {}
 
-
-def cleanup():
-    print("Performing cleanup")
-    for uav_data in uavs_data:
-        destroy_docker_network(uav_net_map[uav_data.uav_id]['network_id'])
+typer = typer.Typer()
 
 
-if __name__ == '__main__':
+@typer.command()
+def main(kafka_ip: str = "172.17.0.1"):
     try:
         for uav_data in uavs_data:
-            network_id, ip = create_and_attach_docker_network(f"UAV_{uav_data.uav_id}")
-            uav_net_map[uav_data.uav_id] = {"network_id": network_id, "ip": ip}
-            threading.Thread(target=subscribe, args=[ip, uav_data.uav_id]).start()
+            network_id, ip, container_id = create_docker_network_and_container(uav_data, kafka_ip)
+            uav_net_map[uav_data.uav_id] = {"network_id": network_id, "ip": ip, "container_id": container_id}
 
-        threading.Thread(target=loop_update_post_position, args=[uav_net_map]).start()
+        sleep(4)
+        threading.Thread(target=loop_update_position_and_network_params, args=[uav_net_map]).start()
 
         map_visualizer.run_map_server_async()
 
@@ -34,3 +32,14 @@ if __name__ == '__main__':
         print("Ctrl+C detected!")
     finally:
         cleanup()
+
+
+def cleanup():
+    print("Performing cleanup")
+    for uav_data in uavs_data:
+        remove_docker_network_and_container(uav_net_map[uav_data.uav_id]['network_id'],
+                                            uav_net_map[uav_data.uav_id]['container_id'])
+
+
+if __name__ == '__main__':
+    typer()

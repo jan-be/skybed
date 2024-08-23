@@ -1,16 +1,16 @@
 import shlex
 import subprocess
 
-from skybed.ns3_interface import Ns3PerformanceParameters
+from skybed.ns3_interface import NetworkParams
 
 
-def slow_down_container_network(network_id: str, perf_params: Ns3PerformanceParameters):
+def slow_down_container_network(network_id: str, network_params: NetworkParams):
     interface = f"br-{network_id[:12]}"
 
-    if perf_params.packet_loss == 1:
+    if network_params.packet_loss == 1:
         tcset_str = f"--overwrite --loss 100%"
     else:
-        tcset_str = f"--overwrite --rate {perf_params.throughput}mbps --delay {perf_params.delay}ms"
+        tcset_str = f"--overwrite --rate {network_params.throughput}mbps --delay {network_params.delay}ms"
 
     print("slowing down now:", tcset_str)
 

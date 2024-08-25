@@ -14,10 +14,15 @@ def slow_down_container_network(network_id: str, network_params: NetworkParams):
 
     print("slowing down now:", tcset_str)
 
-    try:
-        # TODO make incoming work without superuser privileges
-        # subprocess.run(shlex.split(f"tcset {interface} --direction incoming {tcset_str}"), check=True)
-        subprocess.run(shlex.split(f"tcset {interface} --direction outgoing {tcset_str}"), check=True)
-
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to slow down the container. Error: {e}")
+    # tcconfig for some reason sometimes causes a pyroute2.netlink.exceptions.NetlinkDumpInterrupted exception.
+    # I don't know why, but it usually disappears, if you try again.
+    i = 0
+    while i < 4:
+        try:
+            # TODO make incoming work without superuser privileges
+            # subprocess.run(shlex.split(f"tcset {interface} --direction incoming {tcset_str}"), check=True)
+            subprocess.run(shlex.split(f"tcset {interface} --direction outgoing {tcset_str}"), check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to slow down the container. Error: {e}")
+        else:
+            break

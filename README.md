@@ -33,5 +33,5 @@ in the 6gn-functions directory
 
 in this repo's directory
 ```shell
-poetry run python skybed/hypervisor.py
+skybed
 ```

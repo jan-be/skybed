@@ -26,9 +26,10 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
     threading.Thread(target=subscribe, args=[ip, position.uav_data.uav_id]).start()
 
     while True:
+        update_hz = 100
         post_new_position(ip)
-        time.sleep(1)
-        update_position_from_trajectory(1)
+        time.sleep(1 / update_hz)
+        update_position_from_trajectory(1 / update_hz)
 
 
 if __name__ == "__main__":

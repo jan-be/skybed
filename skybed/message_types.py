@@ -4,12 +4,21 @@ from geopy import Point
 from pydantic import BaseModel, Field, ConfigDict, computed_field
 
 
+class UAVContainer(BaseModel):
+    id: str
+    throttled_ip: str
+    unthrottled_ip: str
+    throttled_network_id: str
+    unthrottled_network_id: str
+
+
 class UAVData(BaseModel):
     uav_id: str
     uav_type: str
     speed: float
     direction: float
     vertical_speed: float
+    container: UAVContainer = Field(default=None, exclude=True)
     position: Point = Field(exclude=True)
 
     @computed_field

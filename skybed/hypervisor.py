@@ -7,20 +7,17 @@ from skybed import map_visualizer
 from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container
 from skybed.uas_position_updater import loop_update_position_and_network_params, uavs_data
 
-uav_net_map = {}
-
 typer = typer.Typer()
 
 
 @typer.command()
-def main(kafka_ip: str = "172.17.0.1"):
+def main(kafka_ip: str = "localhost"):
     try:
         for uav_data in uavs_data:
-            network_id, ip, container_id = create_docker_network_and_container(uav_data, kafka_ip)
-            uav_net_map[uav_data.uav_id] = {"network_id": network_id, "ip": ip, "container_id": container_id}
+            threading.Thread(target=create_docker_network_and_container, args=[uav_data, kafka_ip]).start()
 
         sleep(4)
-        threading.Thread(target=loop_update_position_and_network_params, args=[uav_net_map]).start()
+        threading.Thread(target=loop_update_position_and_network_params, daemon=True).start()
 
         map_visualizer.run_map_server_async()
 
@@ -37,8 +34,8 @@ def main(kafka_ip: str = "172.17.0.1"):
 def cleanup():
     print("Performing cleanup")
     for uav_data in uavs_data:
-        remove_docker_network_and_container(uav_net_map[uav_data.uav_id]['network_id'],
-                                            uav_net_map[uav_data.uav_id]['container_id'])
+        # stop always takes 1 second, so multithreading this makes a difference
+        threading.Thread(target=remove_docker_network_and_container, args=[uav_data.container]).start()
 
 
 if __name__ == '__main__':

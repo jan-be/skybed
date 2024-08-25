@@ -48,9 +48,13 @@ gnb_positions = [
 currently_ns3_is_calculating_by_uav = {u.uav_id: False for u in uavs_data}
 
 
-def poll_current_uav_status(uav_data: UAVData, ip: str):
-    r = requests.get(url=f'http://{ip}:5000/uav_data')
+def poll_current_uav_status(uav_data: UAVData):
+    r = requests.get(url=f'http://{uav_data.container.unthrottled_ip}:5000/uav_data')
     new_uav_data = UAVData.model_validate_json(r.text)
+
+    # the container is not transmitted over the network, so restore it from last version
+    new_uav_data.container = uav_data.container
+
     uavs_data[uavs_data.index(uav_data)] = new_uav_data
     print("new UAV data:", new_uav_data)
 
@@ -64,23 +68,21 @@ def get_network_params_best_gnb(uav_data: UAVData) -> NetworkParams:
     return get_ns3_sim_result(distance=closest_dist)
 
 
-def update_container_network(uav_data: UAVData, uav_net_map):
+def update_container_network(uav_data: UAVData):
     currently_ns3_is_calculating_by_uav[uav_data.uav_id] = True
 
     performance_params = get_network_params_best_gnb(uav_data)
     print("performance_params UAV", uav_data.uav_id, performance_params)
-    slow_down_container_network(uav_net_map[uav_data.uav_id]["network_id"], performance_params)
+    slow_down_container_network(uav_data.container.throttled_network_id, performance_params)
 
     currently_ns3_is_calculating_by_uav[uav_data.uav_id] = False
 
 
-def loop_update_position_and_network_params(uav_net_map):
+def loop_update_position_and_network_params():
     while True:
         time.sleep(0.1)
 
-        print(uav_net_map)
-
         for uav_data in uavs_data:
-            poll_current_uav_status(uav_data, uav_net_map[uav_data.uav_id]["ip"])
+            poll_current_uav_status(uav_data)
             if not currently_ns3_is_calculating_by_uav[uav_data.uav_id]:
-                threading.Thread(target=update_container_network, args=(uav_data, uav_net_map)).start()
+                threading.Thread(target=update_container_network, args=[uav_data]).start()

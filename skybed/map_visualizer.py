@@ -57,7 +57,7 @@ def update_graph(value):
 
 
 def run_map_server_async():
-    threading.Thread(target=app.run_server, kwargs={'host': '0.0.0.0', 'port': 8050}).start()
+    threading.Thread(target=app.run_server, kwargs={'host': '0.0.0.0', 'port': 8050}, daemon=True).start()
 
 
 if __name__ == '__main__':

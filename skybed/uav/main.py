@@ -1,3 +1,4 @@
+import sys
 import threading
 import time
 
@@ -8,7 +9,10 @@ from skybed.ns3_interface import NetworkParams
 from skybed.uav import position
 from skybed.uav.internal_server import run_uav_server_async
 from skybed.uav.position import post_new_position, update_position_from_trajectory
+from skybed.uav.publisher import create_producer
 from skybed.uav.subscriber import subscribe
+
+sys.stdout.reconfigure(line_buffering=True)
 
 network_params: NetworkParams
 
@@ -23,11 +27,14 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
                                 speed=speed, direction=direction, vertical_speed=vertical_speed)
 
     run_uav_server_async()
+
+    create_producer(ip)
+
     threading.Thread(target=subscribe, args=[ip, position.uav_data.uav_id]).start()
 
+    update_hz = 50
     while True:
-        update_hz = 100
-        post_new_position(ip)
+        post_new_position()
         time.sleep(1 / update_hz)
         update_position_from_trajectory(1 / update_hz)
 

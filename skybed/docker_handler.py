@@ -27,6 +27,7 @@ def create_docker_network_and_container(uav_data: UAVData, kafka_ip):
         name=name,
         command=uav_command,
         network=net_throttled_name,
+        auto_remove=True
     )
 
     unthrottled_network.connect(container)
@@ -52,7 +53,7 @@ def print_container_output(uav_data: UAVData):
     output = container.attach(stdout=True, stream=True, logs=True)
     # this works indefinitely because idk
     for line in output:
-        print(f"Docker UAV {uav_data.uav_id}: {str(line, "utf-8")}")
+        print(f"Docker UAV {uav_data.uav_id}: {str(line, "utf-8")}", end='')
 
 def remove_docker_network_and_container(uav_container: UAVContainer):
     for net_id in [uav_container.throttled_network_id, uav_container.unthrottled_network_id]:
@@ -62,6 +63,5 @@ def remove_docker_network_and_container(uav_container: UAVContainer):
 
     container = client.containers.get(uav_container.id)
     container.stop(timeout=1)
-    container.remove()
 
-    print(f"Container {uav_container.id} and networks removed.")
+    print(f"Container {uav_container.id} stopped and networks removed.")

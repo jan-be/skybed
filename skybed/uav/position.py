@@ -4,6 +4,7 @@ import geopy.distance
 import requests
 
 from skybed.message_types import UAVData, UAVResponseModel, MetaData
+from skybed.uav.publisher import publish_position_update
 
 uav_data: UAVData
 
@@ -21,14 +22,8 @@ def update_position_from_trajectory(virtual_seconds_since_last_update: float):
     uav_data.position.altitude = new_altitude
 
 
-def post_new_position(ip: str):
-    dump = UAVResponseModel(data=[uav_data],
-                            meta=MetaData(origin="self_report", timestamp=time.time())).model_dump_json()
-    print("dump", dump)
-    # TODO move this to kafka
-    r = requests.post(url=f'http://{ip}:8000/update', data=dump)
-    print("Http response:", r.text)
-
+def post_new_position():
+    publish_position_update(uav_data)
 
 def update_trajectory_from_collision_avoidance_msg(new_uav_data: UAVData):
     # we are the authority on position data, so we don't trust the position data in the requests

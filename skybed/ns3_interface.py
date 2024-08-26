@@ -1,5 +1,5 @@
 # adapted from jan-be/5G-neural-network/simulator/dataset_generation.py
-
+import random
 import re
 import shlex
 import subprocess as sp
@@ -23,7 +23,7 @@ def get_ns3_sim_result(distance: float) -> NetworkParams:
 
     process = sp.Popen(
         shlex.split(
-            f'docker run --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
+            f'docker run --name skybed-ns3-sim-{random.randint(int(1e12), int(1e13))} --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
         stdout=sp.PIPE,
         stderr=sp.PIPE, shell=False)
 

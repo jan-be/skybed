@@ -3,7 +3,7 @@
 
 ## Install
 
-- Install Docker, Python, Poetry
+- Install Docker, Python 3.11 or newer, Poetry
 - Setup [6gn-functions](https://github.com/ChaosRez/6gn-functions) 
 - Setup [tinyFaas](https://github.com/OpenFogStack/tinyFaaS) and modify it to support build tools
 - Then clone this repo and its directory run:
@@ -17,7 +17,8 @@ sudo setcap cap_net_admin+ep /sbin/tc
 sudo setcap cap_net_raw,cap_net_admin+ep /bin/ip
 
 # this will take a while
-docker build -t ns3_lena .
+docker build -f ns3_lena.Dockerfile -t ns3_lena .
+docker build -f uav.Dockerfile -t uav .
 ```
 
 ## Run

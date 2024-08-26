@@ -1,3 +1,5 @@
+import threading
+
 import docker
 
 from skybed.message_types import UAVData, UAVContainer
@@ -6,7 +8,7 @@ from skybed.message_types import UAVData, UAVContainer
 client = docker.from_env()
 
 
-def create_docker_network_and_container(uav_data: UAVData, kafka_ip) -> (str, str, str):
+def create_docker_network_and_container(uav_data: UAVData, kafka_ip):
     name = f"UAV_{uav_data.uav_id}"
     net_throttled_name = f"net_throttled_{name}"
     net_unthrottled_name = f"net_unthrottled_{name}"
@@ -19,8 +21,6 @@ def create_docker_network_and_container(uav_data: UAVData, kafka_ip) -> (str, st
         kafka_ip = throttled_network.attrs["IPAM"]["Config"][0]["Gateway"]
 
     uav_command = f'"{kafka_ip}" "{uav_data.uav_id}" "{uav_data.uav_type}" {uav_data.latitude} {uav_data.longitude} {uav_data.altitude} {uav_data.speed} {uav_data.direction} {uav_data.vertical_speed}'
-
-    # TODO build the image
 
     container = client.containers.create(
         image="uav",
@@ -43,6 +43,16 @@ def create_docker_network_and_container(uav_data: UAVData, kafka_ip) -> (str, st
                                       unthrottled_ip=unthrottled_ip_address, throttled_network_id=throttled_network.id,
                                       unthrottled_network_id=unthrottled_network.id)
 
+    threading.Thread(target=print_container_output, args=[uav_data], daemon=True).start()
+
+
+def print_container_output(uav_data: UAVData):
+    container = client.containers.get(uav_data.container.id)
+
+    output = container.attach(stdout=True, stream=True, logs=True)
+    # this works indefinitely because idk
+    for line in output:
+        print(f"Docker UAV {uav_data.uav_id}: {str(line, "utf-8")}")
 
 def remove_docker_network_and_container(uav_container: UAVContainer):
     for net_id in [uav_container.throttled_network_id, uav_container.unthrottled_network_id]:

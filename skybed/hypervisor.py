@@ -13,8 +13,15 @@ typer = typer.Typer()
 @typer.command()
 def main(kafka_ip: str = "localhost"):
     try:
+        docker_starting_threads = []
+
         for uav_data in uavs_data:
-            threading.Thread(target=create_docker_network_and_container, args=[uav_data, kafka_ip]).start()
+            thread = threading.Thread(target=create_docker_network_and_container, args=[uav_data, kafka_ip])
+            docker_starting_threads.append(thread)
+            thread.start()
+
+        for thread in docker_starting_threads:
+            thread.join()
 
         sleep(4)
         threading.Thread(target=loop_update_position_and_network_params, daemon=True).start()

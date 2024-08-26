@@ -15,4 +15,4 @@ def get_uav_data():
 
 def run_uav_server_async():
     threading.Thread(target=uvicorn.run, args=["skybed.uav.internal_server:fast_api"],
-                     kwargs={"host": "0.0.0.0", "port": 5000, "log_level": "info"}).start()
+                     kwargs={"host": "0.0.0.0", "port": 5000, "access_log": False}).start()

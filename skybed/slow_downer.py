@@ -12,8 +12,6 @@ def slow_down_container_network(network_id: str, network_params: NetworkParams):
     else:
         tcset_str = f"--overwrite --rate {network_params.throughput}mbps --delay {network_params.delay}ms"
 
-    print("slowing down now:", tcset_str)
-
     # tcconfig for some reason sometimes causes a pyroute2.netlink.exceptions.NetlinkDumpInterrupted exception.
     # I don't know why, but it usually disappears, if you try again.
     i = 0

@@ -56,7 +56,6 @@ def poll_current_uav_status(uav_data: UAVData):
     new_uav_data.container = uav_data.container
 
     uavs_data[uavs_data.index(uav_data)] = new_uav_data
-    print("new UAV data:", new_uav_data)
 
 
 def get_network_params_best_gnb(uav_data: UAVData) -> NetworkParams:

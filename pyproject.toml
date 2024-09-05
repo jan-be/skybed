@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Jan Beckschewe <17655375+jan-be@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "skybed"}]
+packages = [{ include = "skybed" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -13,7 +13,7 @@ numpy = "^2.0.0"
 pandas = "^2.2.2"
 docker = "^7.1.0"
 plotly = "^5.22.0"
-fastapi = {extras = ["standard"], version = "^0.112.1"}
+fastapi = { extras = ["standard"], version = "^0.112.1" }
 confluent-kafka = "^2.5.0"
 geopy = "^2.4.1"
 tcconfig = "^0.29.1"
@@ -26,6 +26,6 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-skybed = "skybed.hypervisor:typer"
+skybed = "skybed.hypervisor:typer_app"
 uav = "skybed.uav.main:typer"
 

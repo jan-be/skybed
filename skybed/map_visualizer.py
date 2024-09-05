@@ -5,7 +5,7 @@ import threading
 import plotly.graph_objects as go
 from dash import Dash, dcc, callback, Output, Input
 
-from skybed.uas_position_updater import uavs_data, gnb_positions
+from skybed.uas_position_updater import uavs, gnb_positions
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
@@ -25,17 +25,17 @@ app.layout = [
 )
 def update_graph(value):
     fig = go.Figure(go.Scattermapbox(
-        lat=[gnb_position.latitude for gnb_position in gnb_positions] + [uav.position.latitude for uav in uavs_data],
-        lon=[gnb_position.longitude for gnb_position in gnb_positions] + [uav.position.longitude for uav in uavs_data],
+        lat=[gnb_position.latitude for gnb_position in gnb_positions] + [uav.position.latitude for uav in uavs],
+        lon=[gnb_position.longitude for gnb_position in gnb_positions] + [uav.position.longitude for uav in uavs],
         mode='markers',
         marker={
-            "size": [15] * len(gnb_positions) + [15] * len(uavs_data),  # Arrow size
-            "color": ["red"] * len(gnb_positions) + ["blue"] * len(uavs_data),
-            "symbol": ["circle"] * len(gnb_positions) + ["airport"] * len(uavs_data),
-            "angle": [0] * len(gnb_positions) + [uav.direction for uav in uavs_data],
+            "size": [15] * len(gnb_positions) + [15] * len(uavs),  # Arrow size
+            "color": ["red"] * len(gnb_positions) + ["blue"] * len(uavs),
+            "symbol": ["circle"] * len(gnb_positions) + ["airport"] * len(uavs),
+            "angle": [0] * len(gnb_positions) + [uav.direction for uav in uavs],
             "allowoverlap": True
         },
-        text=["Tower 1", "Tower 2", "Tower 3"] + [f"UAV ID: {uav.uav_id}" for uav in uavs_data],
+        text=["Tower 1", "Tower 2", "Tower 3"] + [f"UAV ID: {uav.uav_id}" for uav in uavs],
     ))
 
     fig.update_layout(

@@ -8,9 +8,9 @@ from skybed.uav import position
 fast_api = FastAPI()
 
 
-@fast_api.get("/uav_data")
-def get_uav_data():
-    return position.uav_data
+@fast_api.get("/uav")
+def get_uav():
+    return position.uav
 
 
 def run_uav_server_async():

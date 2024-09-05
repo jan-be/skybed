@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from geopy import Point
 from pydantic import BaseModel, Field, ConfigDict, computed_field
@@ -12,7 +12,7 @@ class UAVContainer(BaseModel):
     unthrottled_network_id: str
 
 
-class UAVData(BaseModel):
+class UAV(BaseModel):
     uav_id: str
     uav_type: str
     speed: float
@@ -50,9 +50,10 @@ class UAVData(BaseModel):
 
 class MetaData(BaseModel):
     origin: str
-    timestamp: float
+    timestamp: Optional[float]
+    ingest_timestamp: Optional[float]
 
 
 class UAVResponseModel(BaseModel):
-    data: List[UAVData]
+    data: list[UAV]
     meta: Optional[MetaData] = None

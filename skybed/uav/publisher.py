@@ -1,12 +1,12 @@
 from confluent_kafka import Producer
 
-from skybed.message_types import UAVData
+from skybed.message_types import UAV
 
 producer: Producer
 
 
-def publish_position_update(uav_data: UAVData):
-    producer.produce("update", uav_data.model_dump_json())
+def publish_position_update(uav: UAV):
+    producer.produce("updates", uav.model_dump_json())
 
 
 def create_producer(ip: str):

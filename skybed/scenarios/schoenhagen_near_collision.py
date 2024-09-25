@@ -21,3 +21,5 @@ class SchoenhagenNearCollision(Scenario):
         Point(52.207789905972355, 13.160182908727288, 40),
         Point(52.20998760863871, 13.150075547198409, 40)
     ]
+
+    use_precomputed_network_params = True

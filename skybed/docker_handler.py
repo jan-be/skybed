@@ -55,7 +55,7 @@ def print_container_output(uav: UAV):
     output = container.attach(stdout=True, stream=True, logs=True)
     # this works indefinitely because idk
     for line in output:
-        print(f"Docker UAV {uav.uav_id}: {str(line, "utf-8")}", end='')
+        print(f"Docker UAV {uav.uav_id}: {str(line, 'utf-8')}", end='')
 
 
 def remove_docker_network_and_container(uav_container: UAVContainer):

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import threading
@@ -56,9 +57,12 @@ def update_graph(value):
     return fig
 
 
-def run_map_server_async():
+def run_map_server_thread():
     threading.Thread(target=app.run_server, kwargs={'host': '0.0.0.0', 'port': 8050}, daemon=True).start()
 
+async def run_map_server():
+    asyncio.get_running_loop().run_in_executor(None, run_map_server_thread())
 
 if __name__ == '__main__':
-    run_map_server_async()
+    run_map_server_thread()
+

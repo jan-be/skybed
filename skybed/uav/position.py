@@ -19,10 +19,6 @@ def update_position_from_trajectory(virtual_seconds_since_last_update: float):
     uav.position.altitude = new_altitude
 
 
-def post_new_position():
-    publish_position_update(uav)
-
-
 def update_trajectory_from_collision_avoidance_msg(new_uav: UAV):
     # we are the authority on position data, so we don't trust the position data in the requests
     uav.speed = new_uav.speed

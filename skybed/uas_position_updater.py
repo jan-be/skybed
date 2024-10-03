@@ -1,8 +1,8 @@
+import asyncio
 import threading
-import time
-import traceback
 
-import requests
+import aiohttp
+from aiohttp import ClientConnectionError
 
 from skybed.helpers import geopy_3d_distance
 from skybed.message_types import UAV
@@ -15,19 +15,28 @@ scenario: Scenario = Scenario()
 
 currently_ns3_is_calculating_by_uav: list[str] = []
 
+errors_to_success = {"Success": 0, "TimeoutError": 0, "ConnectionRefusedError": 0, "ClientConnectionError": 0}
 
-def poll_current_uav_status(uav: UAV):
+
+async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
     try:
-        r = requests.get(url=f'http://{uav.container.unthrottled_ip}:5000/uav')
-    except Exception:
-        traceback.print_exc()
+        async with session.get(f'http://{uav.container.unthrottled_ip}:5000/uav', timeout=0.1) as resp:
+            json_str = await resp.text()
 
-    new_uav = UAV.model_validate_json(r.text)
+            new_uav = UAV.model_validate_json(json_str)
 
-    # the container is not transmitted over the network, so restore it from last version
-    new_uav.container = uav.container
+            # the container is not transmitted over the network, so restore it from last version
+            new_uav.container = uav.container
 
-    scenario.uavs[scenario.uavs.index(uav)] = new_uav
+            scenario.uavs[scenario.uavs.index(uav)] = new_uav
+
+            errors_to_success["Success"] += 1
+    except TimeoutError:
+        errors_to_success["TimeoutError"] += 1
+    except ConnectionRefusedError:
+        errors_to_success["ConnectionRefusedError"] += 1
+    except ClientConnectionError:
+        errors_to_success["ClientConnectionError"] += 1
 
 
 def get_network_params_best_gnb(uav: UAV) -> NetworkParams:
@@ -62,11 +71,18 @@ def init_scenario(sce: Scenario):
     scenario.use_precomputed_network_params = sce.use_precomputed_network_params
 
 
-def loop_update_position_and_network_params():
-    while True:
-        time.sleep(1)
+async def loop_update_position_and_network_params():
+    async with aiohttp.ClientSession() as session:
 
-        for uav in scenario.uavs:
-            poll_current_uav_status(uav)
-            if scenario.throttle_cellular and uav.uav_id not in currently_ns3_is_calculating_by_uav:
-                threading.Thread(target=update_container_network, args=[uav]).start()
+        while True:
+            await asyncio.sleep(1)
+
+            polling_sessions = []
+            for uav in scenario.uavs:
+                polling_sessions.append(asyncio.create_task(poll_current_uav_status(uav, session)))
+
+            await asyncio.gather(*polling_sessions)
+
+            for uav in scenario.uavs:
+                if scenario.throttle_cellular and uav.uav_id not in currently_ns3_is_calculating_by_uav:
+                    threading.Thread(target=update_container_network, args=[uav]).start()

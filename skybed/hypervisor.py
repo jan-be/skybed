@@ -1,3 +1,4 @@
+import asyncio
 import concurrent.futures
 import importlib
 import inspect
@@ -6,13 +7,15 @@ from inspect import isclass
 from time import sleep
 
 import typer
+from tqdm import tqdm
 from typing_extensions import Annotated
 
 from skybed import map_visualizer
 from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container, \
     create_docker_networks, remove_docker_networks
 from skybed.scenarios.base_scenario import Scenario
-from skybed.uas_position_updater import loop_update_position_and_network_params, scenario, init_scenario
+from skybed.uas_position_updater import loop_update_position_and_network_params, scenario, init_scenario, \
+    errors_to_success
 
 typer_app = typer.Typer()
 
@@ -20,46 +23,58 @@ typer_app = typer.Typer()
 @typer_app.command()
 def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_collision",
          kafka_ip: Annotated[str, typer.Argument()] = "localhost"):
-    # grab the first class instance that is a subclass of Scenario
-    scenario_module = importlib.import_module(f"skybed.scenarios.{scenario_file}")
-    scenario: Scenario = \
-        inspect.getmembers(scenario_module, lambda c: isclass(c) and c != Scenario and issubclass(c, Scenario))[0][1]()
+    async def _main():
+        # grab the first class instance that is a subclass of Scenario
+        scenario_module = importlib.import_module(f"skybed.scenarios.{scenario_file}")
+        scenario: Scenario = \
+            inspect.getmembers(scenario_module, lambda c: isclass(c) and c != Scenario and issubclass(c, Scenario))[0][
+                1]()
 
-    print(scenario)
+        print(scenario)
 
-    create_docker_networks()
+        create_docker_networks()
 
-    try:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
-            # Submit all tasks to the executor
-            futures = [executor.submit(create_docker_network_and_container, uav, kafka_ip) for uav in scenario.uavs]
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+                # Submit all tasks to the executor
+                futures = [executor.submit(create_docker_network_and_container, uav, kafka_ip) for uav in scenario.uavs]
 
-            # Wait for all threads to complete (optional: add timeout if needed)
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    # This will raise an exception if the thread failed
-                    future.result()
-                except Exception as e:
-                    print(f"An error occurred: {e}")
+                # add progress bar
+                with tqdm(total=len(scenario.uavs)) as pbar:
+                    # Wait for all threads to complete
+                    for future in concurrent.futures.as_completed(futures):
+                        try:
+                            # This will raise an exception if the thread failed
+                            future.result()
+                            pbar.update(1)
+                        except Exception as e:
+                            print(f"An error occurred: {e}")
 
-        sleep(4)
-        init_scenario(scenario)
-        threading.Thread(target=loop_update_position_and_network_params, daemon=True).start()
+            sleep(4)
+            init_scenario(scenario)
 
-        map_visualizer.run_map_server_async()
+            await asyncio.gather(
+                loop_update_position_and_network_params(),
+                map_visualizer.run_map_server()
+            )
 
-        # keep cleanup from being called right away
-        while True:
-            sleep(1)
+            # keep cleanup from being called right away
+            while True:
+                sleep(1)
 
-    except KeyboardInterrupt:
-        print("Ctrl+C detected!")
-    finally:
-        cleanup()
+        except KeyboardInterrupt:
+            print("Ctrl+C detected!")
+        finally:
+            cleanup()
+
+    asyncio.run(_main())
 
 
 def cleanup():
     print("Performing cleanup")
+
+    print("error rates:", errors_to_success)
+
     threads = []
     for uav in scenario.uavs:
         # stop always takes 1 second, so multithreading this makes a difference
@@ -73,4 +88,4 @@ def cleanup():
 
 
 if __name__ == '__main__':
-    typer_app()
+    asyncio.run(typer_app())

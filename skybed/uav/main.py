@@ -8,8 +8,8 @@ from skybed.message_types import UAV
 from skybed.ns3_interface import NetworkParams
 from skybed.uav import position
 from skybed.uav.internal_server import run_uav_server_async
-from skybed.uav.position import post_new_position, update_position_from_trajectory
-from skybed.uav.publisher import create_producer
+from skybed.uav.position import update_position_from_trajectory
+from skybed.uav.publisher import create_producer, publish_position_update
 from skybed.uav.subscriber import subscribe
 
 sys.stdout.reconfigure(line_buffering=True)
@@ -38,7 +38,7 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
     i = 0
 
     while True:
-        post_new_position()
+        publish_position_update(position.uav)
         time.sleep(1 / update_hz)
         update_position_from_trajectory(1 / update_hz)
 
@@ -48,6 +48,7 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
         #     print("time difference", expected_time - time.time(), "relative:", (expected_time - time.time()) / (starting_time - time.time()))
         #
         # i += 1
+
 
 if __name__ == "__main__":
     typer()

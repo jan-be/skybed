@@ -20,6 +20,11 @@ from skybed.uas_position_updater import loop_update_position_and_network_params,
 typer_app = typer.Typer()
 
 
+async def stop_after_time(seconds: float):
+    await asyncio.sleep(seconds)
+    raise KeyboardInterrupt()
+
+
 @typer_app.command()
 def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_collision",
          kafka_ip: Annotated[str, typer.Argument()] = "localhost"):
@@ -55,12 +60,9 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
 
             await asyncio.gather(
                 loop_update_position_and_network_params(),
-                map_visualizer.run_map_server()
+                map_visualizer.run_map_server(),
+                stop_after_time(15 * 60)
             )
-
-            # keep cleanup from being called right away
-            while True:
-                sleep(1)
 
         except KeyboardInterrupt:
             print("Ctrl+C detected!")
@@ -88,4 +90,4 @@ def cleanup():
 
 
 if __name__ == '__main__':
-    asyncio.run(typer_app())
+    typer_app()

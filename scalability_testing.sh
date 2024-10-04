@@ -5,5 +5,7 @@ for (( i = 1; i <= 30; i++ )); do
     echo "#####################################################"
     echo "UAV count: ${v}"
     sed -i "19s/.*/            for u in range(${v})]/" "skybed/scenarios/schoenhagen_many_drones.py"
-    timeout -s SIGINT 15m poetry run skybed schoenhagen_many_drones
+    poetry run skybed schoenhagen_many_drones
+    docker stop $(docker ps -a -q)
+    docker network prune -f
 done

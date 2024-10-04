@@ -5,6 +5,7 @@
 
 - Install Docker, Python 3.11 or newer, Poetry
 - Setup [6gn-functions](https://github.com/ChaosRez/6gn-functions) 
+- Setup [6gn-ingester](https://github.com/ChaosRez/6gn-ingester) 
 - Setup [tinyFaas](https://github.com/OpenFogStack/tinyFaaS) and modify it to support build tools
 - Then clone this repo and its directory run:
 ```shell

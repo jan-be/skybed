@@ -77,6 +77,9 @@ def cleanup():
 
     print("error rates:", errors_to_success)
 
+    with open('repeatability_results.json', 'a') as file:
+        file.write(f"{[x.position for x in scenario.uavs]}\n")
+
     threads = []
     for uav in scenario.uavs:
         # stop always takes 1 second, so multithreading this makes a difference

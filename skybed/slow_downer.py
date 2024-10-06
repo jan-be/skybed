@@ -8,7 +8,7 @@ from skybed.ns3_interface import NetworkParams
 def slow_down_container_network(container: UAVContainer, network_params: NetworkParams):
     interface = f"br-{container.throttled_network_id[:12]}"
 
-    if network_params.packet_loss == 1:
+    if network_params.packet_loss == 1 or network_params.throughput == 0:
         tcset_str = f"--change --loss 100%"
     else:
         tcset_str = f"--change --rate {network_params.throughput}mbps --delay {network_params.delay}ms"
@@ -18,6 +18,7 @@ def slow_down_container_network(container: UAVContainer, network_params: Network
     i = 0
     while i < 4:
         try:
+            i += 1
             # TODO make incoming work without superuser privileges
             # subprocess.run(shlex.split(f"tcset {interface} --direction incoming {tcset_str}"), check=True)
             subprocess.run(shlex.split(

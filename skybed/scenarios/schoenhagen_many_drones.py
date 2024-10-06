@@ -16,7 +16,7 @@ class SchoenhagenManyDrones(Scenario):
                 direction=random.uniform(0, 360),
                 longitude=13.150412924715013 + random.uniform(-1e-2, 1e-2),
                 altitude=300 + random.uniform(-100, 100))
-            for u in range(200)]
+            for u in range(20)]
 
     gnb_positions = [
         Point(52.202822869219, 13.160761351939868, 40),
@@ -25,4 +25,4 @@ class SchoenhagenManyDrones(Scenario):
     ]
 
     # throttle_cellular = False
-    use_precomputed_network_params = True
+    # use_precomputed_network_params = True

@@ -34,20 +34,10 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
 
     update_hz = 50
 
-    starting_time = time.time()
-    i = 0
-
     while True:
         publish_position_update(position.uav)
         time.sleep(1 / update_hz)
         update_position_from_trajectory(1 / update_hz)
-
-        # use this to figure out how far real time and simulation time drift apart
-        # if i % 50 == 0:
-        #     expected_time = starting_time + i / update_hz
-        #     print("time difference", expected_time - time.time(), "relative:", (expected_time - time.time()) / (starting_time - time.time()))
-        #
-        # i += 1
 
 
 if __name__ == "__main__":

@@ -12,6 +12,10 @@ class UAVContainer(BaseModel):
     unthrottled_network_id: str
 
 
+class UAVEvaluation(BaseModel):
+    network_update_count: int = 0
+
+
 class UAV(BaseModel):
     uav_id: str
     uav_type: str
@@ -19,6 +23,7 @@ class UAV(BaseModel):
     direction: float
     vertical_speed: float
     container: UAVContainer = Field(default=None, exclude=True)
+    evaluation: UAVEvaluation = Field(default=UAVEvaluation(), exclude=True)
     position: Point = Field(exclude=True)
 
     @computed_field

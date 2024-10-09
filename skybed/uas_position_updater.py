@@ -25,8 +25,9 @@ async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
 
             new_uav = UAV.model_validate_json(json_str)
 
-            # the container is not transmitted over the network, so restore it from last version
+            # the container and evaluation are not transmitted over the network, so restore them from last version
             new_uav.container = uav.container
+            new_uav.evaluation = uav.evaluation
 
             scenario.uavs[scenario.uavs.index(uav)] = new_uav
 
@@ -59,6 +60,8 @@ def update_container_network(uav: UAV):
     slow_down_container_network(uav.container, performance_params)
 
     currently_ns3_is_calculating_by_uav.remove(uav.uav_id)
+
+    uav.evaluation.network_update_count += 1
 
 
 def init_scenario(sce: Scenario):

@@ -2,7 +2,9 @@ import asyncio
 import concurrent.futures
 import importlib
 import inspect
+import statistics
 import threading
+import time
 from inspect import isclass
 from time import sleep
 
@@ -18,6 +20,8 @@ from skybed.uas_position_updater import loop_update_position_and_network_params,
     errors_to_success
 
 typer_app = typer.Typer()
+
+starting_time: float
 
 
 async def stop_after_time(seconds: float):
@@ -58,6 +62,9 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
             sleep(4)
             init_scenario(scenario)
 
+            global starting_time
+            starting_time = time.perf_counter()
+
             await asyncio.gather(
                 loop_update_position_and_network_params(),
                 map_visualizer.run_map_server(),
@@ -79,6 +86,12 @@ def cleanup():
 
     with open('repeatability_results.json', 'a') as file:
         file.write(f"{[x.position for x in scenario.uavs]}\n")
+
+    print([x.evaluation.network_update_count for x in scenario.uavs])
+    avg_network_update_count = statistics.mean([x.evaluation.network_update_count for x in scenario.uavs])
+    avg_network_update_time = (time.perf_counter() - starting_time) / avg_network_update_count
+    with open('avg_network_update_time.csv', 'a') as file:
+        file.write(f"{avg_network_update_time}\n")
 
     threads = []
     for uav in scenario.uavs:

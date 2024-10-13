@@ -32,11 +32,8 @@ def precompute_network_params(samples=1000):
         with tqdm(total=samples) as pbar:
             # Wait for all threads to complete
             for future in concurrent.futures.as_completed(futures):
-                try:
-                    future.result()
-                    pbar.update(1)
-                except Exception as e:
-                    print(f"An error occurred: {e}")
+                future.result()
+                pbar.update(1)
 
     df = pd.DataFrame(results, columns=['distance', 'throughput', 'delay'])
     df = df.sort_values(by='distance')

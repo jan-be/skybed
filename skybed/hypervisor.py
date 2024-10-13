@@ -52,12 +52,8 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
                 with tqdm(total=len(scenario.uavs)) as pbar:
                     # Wait for all threads to complete
                     for future in concurrent.futures.as_completed(futures):
-                        try:
-                            # This will raise an exception if the thread failed
-                            future.result()
-                            pbar.update(1)
-                        except Exception as e:
-                            print(f"An error occurred: {e}")
+                        future.result()
+                        pbar.update(1)
 
             sleep(4)
             init_scenario(scenario)

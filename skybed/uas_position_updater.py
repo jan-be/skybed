@@ -1,4 +1,6 @@
 import asyncio
+import concurrent
+import multiprocessing
 import threading
 
 import aiohttp
@@ -89,3 +91,12 @@ async def loop_update_position_and_network_params():
             for uav in scenario.uavs:
                 if scenario.throttle_cellular and uav.uav_id not in currently_ns3_is_calculating_by_uav:
                     threading.Thread(target=update_container_network, args=[uav]).start()
+
+            if scenario.throttle_cellular:
+                # only run as many concurrent ns-3 simulations as there are CPU cores
+                with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+                    futures = [executor.submit(update_container_network, uav)
+                               for uav in scenario.uavs if uav.uav_id not in currently_ns3_is_calculating_by_uav]
+
+                    for future in concurrent.futures.as_completed(futures):
+                        future.result()

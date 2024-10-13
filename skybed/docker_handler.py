@@ -3,14 +3,17 @@ import threading
 import docker
 
 from skybed.message_types import UAV, UAVContainer
+from skybed.slow_downer import init_traffic_control
 
 # Initialize the Docker client
 client = docker.from_env()
 
 
-def create_docker_networks():
-    client.networks.create(name="skybed-throttled-net", driver="bridge")
+def init_docker_networks():
+    throttled_network = client.networks.create(name="skybed-throttled-net", driver="bridge")
     client.networks.create(name="skybed-unthrottled-net", internal=True)
+
+    init_traffic_control(throttled_network.id)
 
 
 def create_docker_network_and_container(uav: UAV, kafka_ip):

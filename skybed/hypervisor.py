@@ -14,7 +14,7 @@ from typing_extensions import Annotated
 
 from skybed import map_visualizer
 from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container, \
-    create_docker_networks, remove_docker_networks
+    init_docker_networks, remove_docker_networks
 from skybed.scenarios.base_scenario import Scenario
 from skybed.uas_position_updater import loop_update_position_and_network_params, scenario, init_scenario, \
     errors_to_success
@@ -41,7 +41,7 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
 
         print(scenario)
 
-        create_docker_networks()
+        init_docker_networks()
 
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:

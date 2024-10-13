@@ -10,6 +10,7 @@ class UAVContainer(BaseModel):
     unthrottled_ip: str
     throttled_network_id: str
     unthrottled_network_id: str
+    tc_class_added: bool = False
 
 
 class UAVEvaluation(BaseModel):

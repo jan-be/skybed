@@ -12,9 +12,9 @@ import typer
 from tqdm import tqdm
 from typing_extensions import Annotated
 
-from skybed import map_visualizer
 from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container, \
     init_docker_networks, remove_docker_networks
+from skybed.map_visualizer import run_map_server_thread
 from skybed.scenarios.base_scenario import Scenario
 from skybed.uas_position_updater import loop_update_position_and_network_params, scenario, init_scenario, \
     errors_to_success
@@ -61,11 +61,14 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
             global starting_time
             starting_time = time.perf_counter()
 
-            await asyncio.gather(
-                loop_update_position_and_network_params(),
-                map_visualizer.run_map_server(),
-                stop_after_time(15 * 60)
-            )
+            try:
+                await asyncio.gather(
+                    loop_update_position_and_network_params(),
+                    asyncio.to_thread(run_map_server_thread),
+                    stop_after_time(5 * 60)
+                )
+            except Exception as e:
+                print(e)
 
         except KeyboardInterrupt:
             print("Ctrl+C detected!")

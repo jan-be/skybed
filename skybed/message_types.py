@@ -26,6 +26,8 @@ class UAV(BaseModel):
     container: UAVContainer = Field(default=None, exclude=True)
     evaluation: UAVEvaluation = Field(default=UAVEvaluation(), exclude=True)
     position: Point = Field(exclude=True)
+    currently_in_collision: bool = Field(default=False)
+    previously_in_collision: bool = Field(default=False)
 
     @computed_field
     @property

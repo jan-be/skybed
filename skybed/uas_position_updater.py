@@ -1,12 +1,11 @@
 import asyncio
-import concurrent
 import multiprocessing
-import threading
 
 import aiohttp
 from aiohttp import ClientConnectionError
 
-from skybed.helpers import geopy_3d_distance
+from skybed.collision_detector import detect_collisions
+from skybed.helpers import geopy_3d_distance, gather_with_concurrency
 from skybed.message_types import UAV
 from skybed.ns3_interface import NetworkParams, get_ns3_sim_result
 from skybed.precompute_network_params import get_closest_ns3_sim_result
@@ -42,7 +41,7 @@ async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
         errors_to_success["ClientConnectionError"] += 1
 
 
-def get_network_params_best_gnb(uav: UAV) -> NetworkParams:
+async def get_network_params_best_gnb(uav: UAV) -> NetworkParams:
     closest_dist = float("inf")
     for gnb_position in scenario.gnb_positions:
         dist = geopy_3d_distance(gnb_position, uav.position)
@@ -51,13 +50,13 @@ def get_network_params_best_gnb(uav: UAV) -> NetworkParams:
     if scenario.use_precomputed_network_params:
         return get_closest_ns3_sim_result(distance=closest_dist)
     else:
-        return get_ns3_sim_result(distance=closest_dist)
+        return await get_ns3_sim_result(distance=closest_dist)
 
 
-def update_container_network(uav: UAV):
+async def update_container_network(uav: UAV):
     currently_ns3_is_calculating_by_uav.append(uav.uav_id)
 
-    performance_params = get_network_params_best_gnb(uav)
+    performance_params = await get_network_params_best_gnb(uav)
     print("performance_params UAV", uav.uav_id, performance_params)
     slow_down_container_network(uav.container, performance_params)
 
@@ -76,27 +75,27 @@ def init_scenario(sce: Scenario):
     scenario.use_precomputed_network_params = sce.use_precomputed_network_params
 
 
-async def loop_update_position_and_network_params():
+async def loop_update_position():
     async with aiohttp.ClientSession() as session:
 
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
+            # get UAV positions via HTTP GET
             polling_sessions = []
             for uav in scenario.uavs:
                 polling_sessions.append(asyncio.create_task(poll_current_uav_status(uav, session)))
-
             await asyncio.gather(*polling_sessions)
 
-            for uav in scenario.uavs:
-                if scenario.throttle_cellular and uav.uav_id not in currently_ns3_is_calculating_by_uav:
-                    threading.Thread(target=update_container_network, args=[uav]).start()
+            detect_collisions(scenario)
 
-            if scenario.throttle_cellular:
-                # only run as many concurrent ns-3 simulations as there are CPU cores
-                with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-                    futures = [executor.submit(update_container_network, uav)
-                               for uav in scenario.uavs if uav.uav_id not in currently_ns3_is_calculating_by_uav]
 
-                    for future in concurrent.futures.as_completed(futures):
-                        future.result()
+async def loop_update_network_params():
+    if scenario.throttle_cellular:
+        while True:
+            await asyncio.sleep(0.5)
+
+            coroutines = [update_container_network(uav) for uav in scenario.uavs if
+                          uav.uav_id not in currently_ns3_is_calculating_by_uav]
+
+            await gather_with_concurrency(multiprocessing.cpu_count(), *coroutines)

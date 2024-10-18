@@ -8,3 +8,4 @@ class Scenario:
     gnb_positions: list[Point] = []
     throttle_cellular: bool = True
     use_precomputed_network_params: bool = False
+    collision_radius: float = 100  # in meters

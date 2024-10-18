@@ -2,9 +2,7 @@ import asyncio
 import concurrent.futures
 import importlib
 import inspect
-import statistics
 import threading
-import time
 from inspect import isclass
 from time import sleep
 
@@ -14,14 +12,12 @@ from typing_extensions import Annotated
 
 from skybed.docker_handler import create_docker_network_and_container, remove_docker_network_and_container, \
     init_docker_networks, remove_docker_networks
+from skybed.logger import init_logging, write_logs
 from skybed.map_visualizer import run_map_server_thread
 from skybed.scenarios.base_scenario import Scenario
-from skybed.uas_position_updater import loop_update_position_and_network_params, scenario, init_scenario, \
-    errors_to_success
+from skybed.uas_position_updater import loop_update_position, scenario, init_scenario, loop_update_network_params
 
 typer_app = typer.Typer()
-
-starting_time: float
 
 
 async def stop_after_time(seconds: float):
@@ -58,12 +54,12 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
             sleep(4)
             init_scenario(scenario)
 
-            global starting_time
-            starting_time = time.perf_counter()
+            init_logging()
 
             try:
                 await asyncio.gather(
-                    loop_update_position_and_network_params(),
+                    loop_update_position(),
+                    loop_update_network_params(),
                     asyncio.to_thread(run_map_server_thread),
                     stop_after_time(5 * 60)
                 )
@@ -81,16 +77,7 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
 def cleanup():
     print("Performing cleanup")
 
-    print("error rates:", errors_to_success)
-
-    with open('repeatability_results.json', 'a') as file:
-        file.write(f"{[x.position for x in scenario.uavs]}\n")
-
-    print([x.evaluation.network_update_count for x in scenario.uavs])
-    avg_network_update_count = statistics.mean([x.evaluation.network_update_count for x in scenario.uavs])
-    avg_network_update_time = (time.perf_counter() - starting_time) / avg_network_update_count
-    with open('avg_network_update_time.csv', 'a') as file:
-        file.write(f"{avg_network_update_time}\n")
+    write_logs(scenario)
 
     threads = []
     for uav in scenario.uavs:

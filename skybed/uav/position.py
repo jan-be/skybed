@@ -1,7 +1,6 @@
 import geopy.distance
 
 from skybed.message_types import UAV
-from skybed.uav.publisher import publish_position_update
 
 uav: UAV
 

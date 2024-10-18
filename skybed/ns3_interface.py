@@ -1,8 +1,8 @@
 # adapted from jan-be/5G-neural-network/simulator/dataset_generation.py
+import asyncio
 import random
 import re
 import shlex
-import subprocess as sp
 
 from pydantic import BaseModel
 
@@ -14,22 +14,20 @@ class NetworkParams(BaseModel):
     packet_loss: float
 
 
-def get_ns3_sim_result(distance: float) -> NetworkParams:
+async def get_ns3_sim_result(distance: float) -> NetworkParams:
     # the simulation for some reason breaks if the distance is >= 2^16 meters
     if distance >= 65536:
         return NetworkParams(delay=0, jitter=0, throughput=0, packet_loss=1)
 
     # 49 dbm from https://www.techplayon.com/5g-nr-total-transmit-power-maximum-cell-transmit-power-reference-signal-power/
 
-    process = sp.Popen(
-        shlex.split(
-            f'docker run --name skybed-ns3-sim-{random.randint(int(1e12), int(1e13))} --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
-        stdout=sp.PIPE,
-        stderr=sp.PIPE, shell=False)
+    process = await asyncio.create_subprocess_exec(
+            *shlex.split(f'docker run --name skybed-ns3-sim-{random.randint(int(1e12), int(1e13))} --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE)
 
-    raw_ns3_out = ""
-    for line in process.stdout.readlines():
-        raw_ns3_out += line.decode("utf-8")
+    stdout, stderr = await process.communicate()
+    raw_ns3_out = stdout.decode("utf-8")
 
     sim_result_vars_names = ["Tx Packets", "Rx Packets", "Mean delay", "Mean jitter", "Throughput"]
     sim_results = {}

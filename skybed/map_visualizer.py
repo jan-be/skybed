@@ -9,8 +9,6 @@ from skybed.uas_position_updater import scenario
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-mapbox_access_token = open(os.path.join(os.path.dirname(__file__), ".mapbox_token")).read()
-
 app = Dash()
 
 app.layout = [
@@ -24,7 +22,7 @@ app.layout = [
     Input('interval', 'n_intervals')
 )
 def update_graph(value):
-    fig = go.Figure(go.Scattermapbox(
+    fig = go.Figure(go.Scattermap(
         lat=[gnb_position.latitude for gnb_position in scenario.gnb_positions] + [uav.position.latitude for uav in
                                                                                   scenario.uavs],
         lon=[gnb_position.longitude for gnb_position in scenario.gnb_positions] + [uav.position.longitude for uav in
@@ -44,9 +42,8 @@ def update_graph(value):
     fig.update_layout(
         autosize=True,
         hovermode='closest',
-        mapbox=dict(
-            accesstoken=mapbox_access_token,
-            style="outdoors",
+        map=dict(
+            style="https://tiles.stadiamaps.com/styles/outdoors.json?api_key=YOUR-API-KEY",
             bearing=0,
             center=dict(
                 lat=52.20572798737899,

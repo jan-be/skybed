@@ -22,7 +22,7 @@ async def get_ns3_sim_result(distance: float) -> NetworkParams:
     # 49 dbm from https://www.techplayon.com/5g-nr-total-transmit-power-maximum-cell-transmit-power-reference-signal-power/
 
     process = await asyncio.create_subprocess_exec(
-            *shlex.split(f'docker run --name skybed-ns3-sim-{random.randint(int(1e12), int(1e13))} --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
+            *shlex.split(f'docker run --network=none --name skybed-ns3-sim-{random.randint(int(1e12), int(1e13))} --rm ns3_lena ./ns3 run --no-build "cttc-nr-mimo-demo --txPowerGnb=49 --gnbUeDistance={distance}"'),
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE)
 

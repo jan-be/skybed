@@ -24,7 +24,7 @@ class UAV(BaseModel):
     direction: float
     vertical_speed: float
     container: UAVContainer = Field(default=None, exclude=True)
-    evaluation: UAVEvaluation = Field(default=UAVEvaluation(), exclude=True)
+    evaluation: UAVEvaluation = Field(default=UAVEvaluation())
     position: Point = Field(exclude=True)
     currently_in_collision: bool = Field(default=False)
     previously_in_collision: bool = Field(default=False)

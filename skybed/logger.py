@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import psutil
 from pydantic import BaseModel, ConfigDict
 
 from skybed.message_types import UAV
@@ -22,6 +23,8 @@ class SkybedLogFile(BaseModel):
     iso_time_str: str
     uavs: list[UAV]
     total_runtime: float
+    cpu_usage: float
+    memory_usage: float
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -49,7 +52,10 @@ def write_logs(scenario: Scenario):
         position_req_errors=errors_to_success["TimeoutError"],
         iso_time_str=iso_time_str,
         uavs=scenario.uavs,
-        total_runtime=total_runtime)
+        total_runtime=total_runtime,
+        cpu_usage=psutil.getloadavg()[1],
+        memory_usage=psutil.virtual_memory().used
+    )
 
     # create the logs directory in the main repo directory if it doesn't exist and put the JSON into it
     Path(os.path.join(os.path.dirname(__file__), "../logs")).mkdir(parents=True, exist_ok=True)

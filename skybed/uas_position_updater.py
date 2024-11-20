@@ -32,6 +32,7 @@ async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
             new_uav.evaluation = uav.evaluation
             new_uav.previously_in_collision = uav.previously_in_collision
             new_uav.currently_in_collision = uav.currently_in_collision
+            new_uav.evaluation = uav.evaluation
 
             scenario.uavs[scenario.uavs.index(uav)] = new_uav
 

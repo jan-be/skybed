@@ -53,5 +53,5 @@ def write_logs(scenario: Scenario):
 
     # create the logs directory in the main repo directory if it doesn't exist and put the JSON into it
     Path(os.path.join(os.path.dirname(__file__), "../logs")).mkdir(parents=True, exist_ok=True)
-    with open(f"{os.path.join(os.path.dirname(__file__), "../logs")}/log_{iso_time_str}.json", "w+") as f:
+    with open(f"{os.path.join(os.path.dirname(__file__), '../logs')}/log_{iso_time_str}.json", "w+") as f:
         f.write(log_file.model_dump_json())

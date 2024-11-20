@@ -43,7 +43,7 @@ def update_graph(value):
         autosize=True,
         hovermode='closest',
         map=dict(
-            style="https://tiles.stadiamaps.com/styles/outdoors.json?api_key=YOUR-API-KEY",
+            style="https://tiles.stadiamaps.com/styles/outdoors.json?api_key=be66635b-f102-41ad-a3cd-1e3c083c5ce2",
             bearing=0,
             center=dict(
                 lat=52.20572798737899,

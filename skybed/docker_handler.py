@@ -26,6 +26,8 @@ def create_docker_network_and_container(uav: UAV, kafka_ip):
         kafka_ip = throttled_network.attrs["IPAM"]["Config"][0]["Gateway"]
 
     uav_command = f'"{kafka_ip}" "{uav.uav_id}" "{uav.uav_type}" -- {uav.latitude} {uav.longitude} {uav.altitude} {uav.speed} {uav.direction} {uav.vertical_speed}'
+    # use this with uav_iperf.Dockerfile
+    # uav_command = f'uav "{kafka_ip}" "{uav.uav_id}" "{uav.uav_type}" -- {uav.latitude} {uav.longitude} {uav.altitude} {uav.speed} {uav.direction} {uav.vertical_speed}'
 
     container = client.containers.create(
         image="uav",

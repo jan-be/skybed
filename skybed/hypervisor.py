@@ -4,7 +4,6 @@ import importlib
 import inspect
 import threading
 from inspect import isclass
-from time import sleep
 
 import typer
 from tqdm import tqdm
@@ -31,28 +30,27 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
     async def _main():
         # grab the first class instance that is a subclass of Scenario
         scenario_module = importlib.import_module(f"skybed.scenarios.{scenario_file}")
-        scenario: Scenario = \
+        scenario_start: Scenario = \
             inspect.getmembers(scenario_module, lambda c: isclass(c) and c != Scenario and issubclass(c, Scenario))[0][
                 1]()
 
-        print(scenario)
+        print(scenario_start)
 
         init_docker_networks()
 
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
                 # Submit all tasks to the executor
-                futures = [executor.submit(create_docker_network_and_container, uav, kafka_ip) for uav in scenario.uavs]
+                futures = [executor.submit(create_docker_network_and_container, uav, kafka_ip) for uav in scenario_start.uavs]
 
                 # add progress bar
-                with tqdm(total=len(scenario.uavs)) as pbar:
+                with tqdm(total=len(scenario_start.uavs)) as pbar:
                     # Wait for all threads to complete
                     for future in concurrent.futures.as_completed(futures):
                         future.result()
                         pbar.update(1)
 
-            sleep(4)
-            init_scenario(scenario)
+            init_scenario(scenario_start)
 
             init_logging()
 
@@ -61,7 +59,7 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
                     loop_update_position(),
                     loop_update_network_params(),
                     asyncio.to_thread(run_map_server_thread),
-                    stop_after_time(5 * 60)
+                    stop_after_time(10 * 60)
                 )
             except Exception as e:
                 print(e)

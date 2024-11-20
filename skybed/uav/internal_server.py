@@ -9,7 +9,7 @@ fast_api = FastAPI()
 
 
 @fast_api.get("/uav")
-def get_uav():
+async def get_uav():
     return position.uav
 
 

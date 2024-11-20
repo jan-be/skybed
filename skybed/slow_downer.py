@@ -21,6 +21,10 @@ def slow_down_container_network(container: UAVContainer, network_params: Network
 
     if network_params.throughput == 0:
         network_params.packet_loss = 1
+    else:
+        # this is because the packet loss from 5g-LENA is really high,
+        # and if we just copy it, we get approximately 0 MBit/s TCP throughput
+        network_params.packet_loss = 0
 
     try:
         if not container.tc_class_added:

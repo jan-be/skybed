@@ -1,3 +1,5 @@
+import shlex
+import subprocess
 import sys
 import threading
 import time
@@ -18,6 +20,12 @@ network_params: NetworkParams
 
 typer = typer.Typer()
 
+def run_iperf():
+    try:
+        subprocess.run(shlex.split("iperf3 -s"), check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"iperf3 failed: {e.stdout} {e.stderr}")
+
 
 @typer.command()
 def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: float, altitude: float, speed: float,
@@ -31,6 +39,7 @@ def start_uav(ip: str, uav_id: str, uav_type: str, latitude: float, longitude: f
     create_producer(ip)
 
     threading.Thread(target=subscribe, args=[ip, position.uav.uav_id]).start()
+    threading.Thread(target=run_iperf).start()
 
     update_hz = 50
 

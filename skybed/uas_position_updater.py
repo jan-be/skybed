@@ -27,8 +27,11 @@ async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
             new_uav = UAV.model_validate_json(json_str)
 
             # the container and evaluation are not transmitted over the network, so restore them from last version
+            # maybe refactor this at some point
             new_uav.container = uav.container
             new_uav.evaluation = uav.evaluation
+            new_uav.previously_in_collision = uav.previously_in_collision
+            new_uav.currently_in_collision = uav.currently_in_collision
 
             scenario.uavs[scenario.uavs.index(uav)] = new_uav
 
@@ -73,13 +76,14 @@ def init_scenario(sce: Scenario):
     else:
         scenario.throttle_cellular = sce.throttle_cellular
     scenario.use_precomputed_network_params = sce.use_precomputed_network_params
+    scenario.collision_radius = sce.collision_radius
 
 
 async def loop_update_position():
     async with aiohttp.ClientSession() as session:
 
         while True:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
             # get UAV positions via HTTP GET
             polling_sessions = []

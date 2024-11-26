@@ -16,8 +16,6 @@ scenario: Scenario = Scenario()
 
 currently_ns3_is_calculating_by_uav: list[str] = []
 
-errors_to_success = {"Success": 0, "TimeoutError": 0, "ConnectionRefusedError": 0, "ClientConnectionError": 0}
-
 
 async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
     try:
@@ -36,13 +34,9 @@ async def poll_current_uav_status(uav: UAV, session: aiohttp.ClientSession):
 
             scenario.uavs[scenario.uavs.index(uav)] = new_uav
 
-            errors_to_success["Success"] += 1
-    except TimeoutError:
-        errors_to_success["TimeoutError"] += 1
-    except ConnectionRefusedError:
-        errors_to_success["ConnectionRefusedError"] += 1
-    except ClientConnectionError:
-        errors_to_success["ClientConnectionError"] += 1
+            uav.evaluation.poll_response_count += 1
+    except (TimeoutError, ConnectionRefusedError, ClientConnectionError):
+        uav.evaluation.poll_no_response_count += 1
 
 
 async def get_network_params_best_gnb(uav: UAV) -> NetworkParams:

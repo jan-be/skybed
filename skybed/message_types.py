@@ -15,6 +15,8 @@ class UAVContainer(BaseModel):
 
 class UAVEvaluation(BaseModel):
     network_update_count: int = 0
+    poll_response_count: int = 0
+    poll_no_response_count: int = 0
 
 
 class UAV(BaseModel):

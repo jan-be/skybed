@@ -26,7 +26,7 @@ async def stop_after_time(seconds: float):
 
 @typer_app.command()
 def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_collision",
-         kafka_ip: Annotated[str, typer.Argument()] = "localhost"):
+         test_system_ip: Annotated[str, typer.Argument()] = "localhost"):
     async def _main():
         # grab the first class instance that is a subclass of Scenario
         scenario_module = importlib.import_module(f"skybed.scenarios.{scenario_file}")
@@ -41,7 +41,7 @@ def main(scenario_file: Annotated[str, typer.Argument()] = "schoenhagen_near_col
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
                 # Submit all tasks to the executor
-                futures = [executor.submit(create_docker_network_and_container, uav, kafka_ip) for uav in scenario_start.uavs]
+                futures = [executor.submit(create_docker_network_and_container, uav, test_system_ip) for uav in scenario_start.uavs]
 
                 # add progress bar
                 with tqdm(total=len(scenario_start.uavs)) as pbar:

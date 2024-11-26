@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict
 
 from skybed.message_types import UAV
 from skybed.scenarios.base_scenario import Scenario
-from skybed.uas_position_updater import errors_to_success
 
 starting_time: float
 

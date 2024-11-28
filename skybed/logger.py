@@ -17,8 +17,6 @@ class SkybedLogFile(BaseModel):
     avg_network_update_count: float
     avg_network_update_time: float
     uavs_final_state: list[UAV]
-    position_req_successes: int
-    position_req_errors: int
     iso_time_str: str
     uavs: list[UAV]
     total_runtime: float
@@ -47,8 +45,6 @@ def write_logs(scenario: Scenario):
         avg_network_update_count=avg_network_update_count,
         avg_network_update_time=avg_network_update_time,
         uavs_final_state=scenario.uavs,
-        position_req_successes=errors_to_success["Success"],
-        position_req_errors=errors_to_success["TimeoutError"],
         iso_time_str=iso_time_str,
         uavs=scenario.uavs,
         total_runtime=total_runtime,
